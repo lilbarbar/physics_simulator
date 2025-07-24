@@ -1,0 +1,6 @@
+(executable
+ (public_name physics_simulator)
+ (name main)
+ (preprocess
+  (pps ppx_jane))
+ (libraries physics_simulator async core core_unix.command_unix))

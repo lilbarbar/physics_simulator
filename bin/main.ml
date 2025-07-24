@@ -9,7 +9,6 @@ let do_a_thing (n : int) : unit Deferred.t =
 
 let main () =
   print_endline "Hello, World!";
-  (* let test_func () =  Graphics.open_graph ("") in *)
   Graphics.open_graph " 10000 x 10000 ";
   let black = Graphics.rgb 000 000 000 in
   Graphics.set_color black;

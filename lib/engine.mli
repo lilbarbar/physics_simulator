@@ -12,3 +12,5 @@ val create : height:int -> width:int -> initial_snake_length:int -> t
 
 (** [game_state] returns the state of the current game. *)
 val engine_state : t -> Engine_state.t
+
+val step : t -> unit

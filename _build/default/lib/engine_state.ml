@@ -2,13 +2,15 @@ open! Core
 
 type t =
   | In_progress
-  | Game_over of string
-  | Win
+  | Paused
+  | Clear
+  | Failure
 [@@deriving sexp_of, compare]
 
 let to_string t =
   match t with
-  | In_progress -> ""
-  | Game_over x -> "Game over: " ^ x
-  | Win -> "WIN!"
+  | In_progress -> "in-progress"
+  | Paused -> "paused"
+  | Clear -> "clear"
+  | Failure -> "failure"
 ;;

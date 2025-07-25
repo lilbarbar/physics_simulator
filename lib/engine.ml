@@ -23,5 +23,6 @@ let create ~height ~width ~initial_snake_length =
 let engine_state t = t.engine_state
 
 let step t =
-  ignore t
+  ignore t;
+  ()
 ;;

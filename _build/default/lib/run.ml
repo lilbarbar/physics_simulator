@@ -14,18 +14,18 @@ let every seconds ~f ~stop =
   don't_wait_for (loop ())
 ;;
 
-let handle_steps (game : Engine.t) ~game_over =
-  every ~stop:game_over 0.1 ~f:(fun () ->
+let handle_steps (game : Engine.t) ~engine_over =
+  every ~stop:engine_over 0.1 ~f:(fun () ->
     Engine.step game;
     Engine_graphics.render game;
-    match Engine.game_state game with
-    | Game_over _ | Win -> game_over := true
-    | In_progress -> ())
+    match Engine.engine_state game with
+    | Paused | Failure -> engine_over := true
+    | In_progress | Clear -> ())
 ;;
 
 let run () =
   let game = Engine_graphics.init_exn () in
   Engine_graphics.render game;
-  let game_over = ref false in
-  handle_steps game ~game_over
+  let engine_over = ref false in
+  handle_steps game ~engine_over
 ;;

@@ -51,32 +51,33 @@ let draw_block { Position.row; col } ~color ~outline =
     Graphics.draw_rect x1 y1 x2 y2)
 ;;
 
-let draw_header ~game_state ~spelled_words ~score =
+let draw_header ~engine_state =
   let open Constants in
   let header_color =
-    match (game_state : Engine_state.t) with
+    match (engine_state : Engine_state.t) with
     | In_progress -> Colors.game_in_progress
-    | Game_over _ -> Colors.game_lost
-    | Win -> Colors.game_won
+    | Failure | Paused -> Colors.game_lost
+    | Clear -> Colors.game_won
   in
   Graphics.moveto 0 (play_area_height + 50);
-  Graphics.draw_string (Printf.sprintf "Score: %d" score);
   Graphics.set_color header_color;
   Graphics.fill_rect 0 play_area_height play_area_width header_height;
-  let header_text = Engine_state.to_string game_state in
+  let header_text = Engine_state.to_string engine_state in
   Graphics.set_color Colors.black;
   Graphics.moveto 0 play_area_height;
   Graphics.draw_string header_text;
-  Graphics.moveto 0 (play_area_height + 25);
-  match spelled_words with
-  | [] -> ()
-  | hd :: tl ->
-    Graphics.draw_string "Spelled words: ";
-    Graphics.set_color Colors.red;
-    Graphics.draw_string (hd ^ " ");
-    Graphics.set_color Colors.black;
-    Graphics.draw_string (String.concat tl ~sep:" ")
+  Graphics.moveto 0 (play_area_height + 25)
 ;;
+
+(* match spelled_words with
+   | [] -> ()
+   | hd :: tl ->
+   Graphics.draw_string "Spelled words: ";
+   Graphics.set_color Colors.red;
+   Graphics.draw_string (hd ^ " ");
+   Graphics.set_color Colors.black;
+   Graphics.draw_string (String.concat tl ~sep:" ")
+   ;; *)
 
 let draw_play_area () =
   let open Constants in
@@ -84,7 +85,7 @@ let draw_play_area () =
   Graphics.fill_rect 0 0 play_area_width play_area_height
 ;;
 
-let draw_letter letter ~color =
+(* let draw_letter letter ~color =
   let open Constants in
   let ({ col; row } : Position.t) = Letter.position letter in
   let char_width, char_height =
@@ -95,32 +96,32 @@ let draw_letter letter ~color =
   Graphics.moveto col row;
   Graphics.set_color color;
   Graphics.draw_char (Letter.char letter)
-;;
+;; *)
 
-let draw_letters (letters : Letters.t) =
-  Letters.letters letters
-  |> List.iter ~f:(fun letter ->
-    draw_letter letter ~color:(Colors.letter_color letter))
-;;
+(* let draw_letters (letters : Letters.t) =
+   Letters.letters letters
+   |> List.iter ~f:(fun letter ->
+   draw_letter letter ~color:(Colors.letter_color letter))
+   ;; *)
 
-let draw_snake snake_head snake_tail eaten_letters =
-  let () =
-    match eaten_letters with
-    | None ->
-      List.iter snake_tail ~f:(draw_block ~color:Colors.green ~outline:false)
-    | Some eaten_letters ->
-      let pos_and_chars, _ =
-        List.zip_with_remainder (List.rev snake_tail) eaten_letters
-      in
-      List.iter pos_and_chars ~f:(fun (position, char) ->
-        draw_block position ~color:Colors.green ~outline:true;
-        Letter.create ~position ~char |> draw_letter ~color:Colors.black)
-  in
-  (* Snake head is a different color *)
-  draw_block ~color:Colors.head_color snake_head ~outline:false
-;;
+(* let draw_snake snake_head snake_tail eaten_letters =
+   let () =
+   match eaten_letters with
+   | None ->
+   List.iter snake_tail ~f:(draw_block ~color:Colors.green ~outline:false)
+   | Some eaten_letters ->
+   let pos_and_chars, _ =
+   List.zip_with_remainder (List.rev snake_tail) eaten_letters
+   in
+   List.iter pos_and_chars ~f:(fun (position, char) ->
+   draw_block position ~color:Colors.green ~outline:true;
+   Letter.create ~position ~char |> draw_letter ~color:Colors.black)
+   in
+   (* Snake head is a different color *)
+   draw_block ~color:Colors.head_color snake_head ~outline:false
+   ;; *)
 
-let render game =
+let render engine =
   (* We want double-buffering. See
      https://v2.ocaml.org/releases/4.03/htmlman/libref/Graphics.html
      for more info!
@@ -129,17 +130,13 @@ let render game =
      set [display_mode] to true and then synchronize. This guarantees
      that there won't be flickering! *)
   Graphics.display_mode false;
-  let snake = Game.snake game in
-  let apple = Game.apple game in
-  let game_state = Game.game_state game in
-  let spelled_words = Game.spelled_words game in
-  let score = Game.score game in
+  let game_state = Engine.engine_state engine in
   (* For the spelling extension only: if you'd like to make the letters bigger and you are on
      mac or linux, you can add the following line here:
 
      Graphics.set_font  "lucidasanstypewriter-bold-18";
   *)
-  draw_header ~game_state ~spelled_words ~score;
+  draw_header ~engine_state;
   draw_play_area ();
   draw_apple apple;
   (* delete this ignore statement and call the function in the Spelling Extension *)

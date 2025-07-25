@@ -60,7 +60,6 @@ let draw_header ~engine_state =
     | Clear -> Colors.game_won
   in
   Graphics.moveto 0 (play_area_height + 50);
-  (* Graphics.draw_string (Printf.sprintf "Score: %d" score); *)
   Graphics.set_color header_color;
   Graphics.fill_rect 0 play_area_height play_area_width header_height;
   let header_text = Engine_state.to_string engine_state in

@@ -10,13 +10,8 @@ module Colors = struct
   let game_lost = Graphics.rgb 200 100 100
   let game_won = Graphics.rgb 100 200 100
   let gold = Graphics.rgb 255 223 0
-  let apple_color apple = match Apple.color apple with Red -> red 
-  | Gold -> gold
-  let letter_color letter = match Letter.color letter with White -> white
 end
 
-(* These constants are optimized for running on a low-resolution screen. Feel free to
-   increase the scaling factor to tweak! *)
 module Constants = struct
   let scaling_factor = 1.
   let play_area_height = 600. *. scaling_factor |> Float.iround_down_exn
@@ -40,7 +35,7 @@ let init_exn () =
        play_area_width);
   let height = play_area_height / block_size in
   let width = play_area_width / block_size in
-  Game.create ~height ~width ~initial_snake_length:3
+  Engine.create ~height ~width ~initial_snake_length:3
 ;;
 
 let draw_block { Position.row; col } ~color ~outline =
@@ -59,7 +54,7 @@ let draw_block { Position.row; col } ~color ~outline =
 let draw_header ~game_state ~spelled_words ~score =
   let open Constants in
   let header_color =
-    match (game_state : Game_state.t) with
+    match (game_state : Engine_state.t) with
     | In_progress -> Colors.game_in_progress
     | Game_over _ -> Colors.game_lost
     | Win -> Colors.game_won
@@ -68,7 +63,7 @@ let draw_header ~game_state ~spelled_words ~score =
   Graphics.draw_string (Printf.sprintf "Score: %d" score);
   Graphics.set_color header_color;
   Graphics.fill_rect 0 play_area_height play_area_width header_height;
-  let header_text = Game_state.to_string game_state in
+  let header_text = Engine_state.to_string game_state in
   Graphics.set_color Colors.black;
   Graphics.moveto 0 play_area_height;
   Graphics.draw_string header_text;
@@ -87,11 +82,6 @@ let draw_play_area () =
   let open Constants in
   Graphics.set_color Colors.black;
   Graphics.fill_rect 0 0 play_area_width play_area_height
-;;
-
-let draw_apple apple =
-  let apple_position = Apple.position apple in
-  draw_block apple_position ~color:(Colors.apple_color apple) ~outline:false
 ;;
 
 let draw_letter letter ~color =

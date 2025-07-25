@@ -6,10 +6,10 @@ open! Core
     fancier! *)
 
 (** [init_exn] fails if called twice. *)
-val init_exn : unit -> Game.t
+val init_exn : unit -> Engine.t
 
 (** [render] renders the entire playing area along with snakes and apples. *)
-val render : Game.t -> unit
+val render : Engine.t -> unit
 
 (** [read_key] returns a keyboard input, if it's available. *)
 val read_key : unit -> char option

@@ -1,4 +1,4 @@
-open! Core
+(* open! Core
 open! Async
 
 let do_a_thing (n : int) : unit Deferred.t =
@@ -26,4 +26,12 @@ let command =
      fun () -> main ())
 ;;
 
-let () = Command_unix.run command
+let () = Command_unix.run command *)
+
+open! Core
+open! Physics_engine_lib
+
+let () =
+  Run.run ();
+  Core.never_returns (Async.Scheduler.go ())
+;;

@@ -1,7 +1,0 @@
-(lang dune 3.18)
-(name physics_simulator)
-(sections (lib .) (bin ../../bin) (doc ../../doc/physics_simulator))
-(files
- (lib (META dune-package opam))
- (bin (physics_simulator))
- (doc (README.md)))

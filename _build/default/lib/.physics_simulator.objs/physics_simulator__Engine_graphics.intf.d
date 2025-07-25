@@ -1,1 +1,1 @@
-lib/engine_graphics.pp.mli: Core Game
+lib/engine_graphics.pp.mli: Core Engine

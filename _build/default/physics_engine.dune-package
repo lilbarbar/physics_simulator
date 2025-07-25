@@ -1,0 +1,7 @@
+(lang dune 3.18)
+(name physics_engine)
+(sections (lib .) (bin ../../bin) (doc ../../doc/physics_engine))
+(files
+ (lib (META dune-package opam))
+ (bin (physics_engine_lib))
+ (doc (README.md)))

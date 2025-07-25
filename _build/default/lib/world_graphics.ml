@@ -2,7 +2,7 @@ open! Core
 open! Objects
 
 let draw_ball (ball : Ball.t) =
-  Graphics.draw_circle ball.x_pos ball.y_pos 50;
+  Graphics.fill_circle ball.x_pos ball.y_pos 50;
   print_string "Done!"
 ;;
 
@@ -14,10 +14,67 @@ let draw_line (line : Line.t) =
 
 let draw_cup (cup : Cup.t) =
   Graphics.moveto cup.x_pos cup.y_pos;
-  Graphics.lineto cup.x_pos (cup.y_pos + 100);
-  Graphics.moveto cup.x_pos (cup.y_pos + 100);
-  Graphics.lineto (cup.x_pos + 75) (cup.y_pos + 100);
-  Graphics.moveto (cup.x_pos + 75) (cup.y_pos + 100);
+  Graphics.lineto cup.x_pos (cup.y_pos - 100);
+  Graphics.moveto cup.x_pos (cup.y_pos - 100);
+  Graphics.lineto (cup.x_pos + 75) (cup.y_pos - 100);
+  Graphics.moveto (cup.x_pos + 75) (cup.y_pos - 100);
   Graphics.lineto (cup.x_pos + 75) cup.y_pos;
   print_string "Done!"
+;;
+
+let generate_button
+      text
+      ~x_pos
+      ~y_pos
+      ~width
+      ~height
+      ~color_button
+      ~color_text
+  =
+  Graphics.set_color color_button;
+  Graphics.fill_rect x_pos y_pos width height;
+  (* Graphics.set_font "-*-courier-medium-r-normal--*-*-*-*-*-*-iso8859-1"; *)
+  (* Graphics.set_text_size 12 *)
+  let text_width, text_height = Graphics.text_size text in
+  Graphics.moveto
+    (x_pos + (width / 2) - (text_width / 2))
+    (y_pos - (height / 2) - (text_height / 2));
+  Graphics.set_color color_text;
+  Graphics.draw_string text
+;;
+
+let create_enviornment ?(env_width = 750) ?(env_height = 500) () =
+  Graphics.open_graph "first graph";
+  Graphics.resize_window env_width env_height;
+  let black = Graphics.rgb 000 000 000 in
+  let gray = Graphics.rgb 128 128 128 in
+  let white = Graphics.rgb 255 255 255 in
+  Graphics.set_color black;
+  Graphics.fill_rect 0 0 env_width env_height;
+  Graphics.set_color gray;
+  Graphics.fill_rect (2 * env_width / 3) 0 (1 * env_width / 3) env_height;
+  generate_button
+    "Ball"
+    ~x_pos:(7 * env_width / 10)
+    ~y_pos:(9 * env_height / 10)
+    ~width:(1 * env_width / 15)
+    ~height:(1 * env_height / 20)
+    ~color_button:white
+    ~color_text:black;
+  generate_button
+    "Line"
+    ~x_pos:(4 * env_width / 5)
+    ~y_pos:(9 * env_height / 10)
+    ~width:(1 * env_width / 15)
+    ~height:(1 * env_height / 20)
+    ~color_button:white
+    ~color_text:black;
+  generate_button
+    "Cup"
+    ~x_pos:(9 * env_width / 10)
+    ~y_pos:(9 * env_height / 10)
+    ~width:(1 * env_width / 15)
+    ~height:(1 * env_height / 20)
+    ~color_button:white
+    ~color_text:black
 ;;

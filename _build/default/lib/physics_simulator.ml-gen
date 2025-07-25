@@ -12,6 +12,9 @@ module Physics_lib = Physics_simulator__Physics_lib
 (** @canonical Physics_simulator.State *)
 module State = Physics_simulator__State
 
+(** @canonical Physics_simulator.Type_of_object *)
+module Type_of_object = Physics_simulator__Type_of_object
+
 (** @canonical Physics_simulator.World *)
 module World = Physics_simulator__World
 

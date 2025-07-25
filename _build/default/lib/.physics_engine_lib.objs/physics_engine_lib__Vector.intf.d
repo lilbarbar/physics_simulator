@@ -1,1 +1,1 @@
-lib/vector.pp.mli:
+lib/vector.pp.mli: Core Ppx_compare_lib Sexplib0

@@ -1,5 +1,12 @@
 open! Core
 
+module Position = struct
+  type t =
+    { row : int
+    ; col : int
+    }
+end
+
 module Colors = struct
   let black = Graphics.rgb 000 000 000
   let green = Graphics.rgb 000 255 000
@@ -122,28 +129,10 @@ let draw_play_area () =
    ;; *)
 
 let render engine =
-  (* We want double-buffering. See
-     https://v2.ocaml.org/releases/4.03/htmlman/libref/Graphics.html
-     for more info!
-
-     So, we set [display_mode] to false, draw to the background buffer,
-     set [display_mode] to true and then synchronize. This guarantees
-     that there won't be flickering! *)
   Graphics.display_mode false;
-  let game_state = Engine.engine_state engine in
-  (* For the spelling extension only: if you'd like to make the letters bigger and you are on
-     mac or linux, you can add the following line here:
-
-     Graphics.set_font  "lucidasanstypewriter-bold-18";
-  *)
+  let engine_state = Engine.engine_state engine in
   draw_header ~engine_state;
   draw_play_area ();
-  draw_apple apple;
-  (* delete this ignore statement and call the function in the Spelling Extension *)
-  ignore draw_letters;
-  (* update this eaten_letters variable in the Spelling Extension *)
-  let eaten_letters = None in
-  draw_snake (Snake.head snake) (Snake.tail snake) eaten_letters;
   Graphics.display_mode true;
   Graphics.synchronize ()
 ;;

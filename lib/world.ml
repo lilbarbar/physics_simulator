@@ -8,7 +8,7 @@ type t =
   { balls : Ball.t list
   ; lines : Line.t list
   ; cups : Cup.t list
-  ; world_state : State.t
+  ; world_state : Engine_state.t
   }
 
 let draw_all_balls t =

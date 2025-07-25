@@ -18,14 +18,14 @@ module Force = Physics_engine_lib__Force
 (** @canonical Physics_engine_lib.Objects *)
 module Objects = Physics_engine_lib__Objects
 
-(** @canonical Physics_engine_lib.Position *)
-module Position = Physics_engine_lib__Position
-
 (** @canonical Physics_engine_lib.Run *)
 module Run = Physics_engine_lib__Run
 
 (** @canonical Physics_engine_lib.Vector *)
 module Vector = Physics_engine_lib__Vector
+
+(** @canonical Physics_engine_lib.Vectors *)
+module Vectors = Physics_engine_lib__Vectors
 
 (** @canonical Physics_engine_lib.World *)
 module World = Physics_engine_lib__World

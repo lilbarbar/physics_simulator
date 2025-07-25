@@ -6,6 +6,9 @@ module Force = Physics_simulator__Force
 (** @canonical Physics_simulator.Objects *)
 module Objects = Physics_simulator__Objects
 
+(** @canonical Physics_simulator.Physics_lib *)
+module Physics_lib = Physics_simulator__Physics_lib
+
 (** @canonical Physics_simulator.State *)
 module State = Physics_simulator__State
 

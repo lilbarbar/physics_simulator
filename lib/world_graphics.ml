@@ -3,26 +3,30 @@ open! Graphics
 open! Objects
 
 let draw_ball (ball : Ball.t) =
-  let ball_x = Int.of_float ball.center.x in
-  let ball_y = Int.of_float ball.center.y in
-  let ball_radius = Int.of_float ball.radius in
-  Graphics.fill_circle ball_x ball_y ball_radius
+  let x = Int.of_float ball.center.x in
+  let y = Int.of_float ball.center.y in
+  let radius = Int.of_float ball.radius in
+  Graphics.fill_circle x y radius
 ;;
 
-let draw_line (line : Line.t) =
-  Graphics.moveto line.x1_pos line.y1_pos;
-  Graphics.lineto line.x2_pos line.y2_pos;
-  print_string "Done!"
+let draw_line (line : Line.t) : unit =
+  let x1 = Int.of_float line.first_endp.x in
+  let y1 = Int.of_float line.first_endp.y in
+  let x2 = Int.of_float line.second_endp.x in
+  let y2 = Int.of_float line.second_endp.y in
+  Graphics.moveto x1 y1;
+  Graphics.lineto x2 y2
 ;;
 
-let draw_cup (cup : Cup.t) =
-  Graphics.moveto cup.x_pos cup.y_pos;
-  Graphics.lineto cup.x_pos (cup.y_pos - 20);
-  Graphics.moveto cup.x_pos (cup.y_pos - 20);
-  Graphics.lineto (cup.x_pos + 15) (cup.y_pos - 20);
-  Graphics.moveto (cup.x_pos + 15) (cup.y_pos - 20);
-  Graphics.lineto (cup.x_pos + 15) cup.y_pos;
-  print_string "Done!"
+let draw_cup (cup : Cup.t) : unit =
+  let x1 = Int.of_float cup.min.x in
+  let y1 = Int.of_float cup.min.y in
+  let x2 = Int.of_float cup.max.x in
+  let y2 = Int.of_float cup.max.y in
+  Graphics.moveto x1 y1;
+  Graphics.lineto x1 y2;
+  Graphics.lineto x2 y2;
+  Graphics.lineto x2 y1
 ;;
 
 let generate_button
@@ -36,8 +40,6 @@ let generate_button
   =
   Graphics.set_color color_button;
   Graphics.fill_rect x_pos y_pos width height;
-  (* Graphics.set_font "-*-courier-medium-r-normal--*-*-*-*-*-*-iso8859-1"; *)
-  (* Graphics.set_text_size 12 *)
   let text_width, text_height = Graphics.text_size text in
   Graphics.moveto
     (x_pos + (width / 2) - (text_width / 2))
@@ -46,27 +48,24 @@ let generate_button
   Graphics.draw_string text
 ;;
 
-let create_enviornment ?(env_width = 750) ?(env_height = 500) () =
+let create_environment ?(width = 750) ?(height = 500) () =
   Graphics.open_graph " 20000 x 20000 ";
-  Graphics.resize_window env_width env_height;
-  let black = Graphics.rgb 000 000 000 in
-  let gray = Graphics.rgb 128 128 128 in
-  let white = Graphics.rgb 255 255 255 in
+  Graphics.resize_window width height;
   Graphics.set_color black;
-  Graphics.fill_rect 0 0 env_width env_height;
-  Graphics.set_color gray;
-  Graphics.fill_rect (2 * env_width / 3) 0 (1 * env_width / 3) env_height;
+  Graphics.fill_rect 0 0 width height;
+  Graphics.set_color Colors.gray;
+  Graphics.fill_rect (2 * width / 3) 0 (1 * width / 3) height;
   let ball_button_x, line_button_x, cup_button_x =
-    7 * env_width / 10, 4 * env_width / 5, 9 * env_width / 10
+    7 * width / 10, 4 * width / 5, 9 * width / 10
   in
   let ball_button_y, line_button_y, cup_button_y =
-    9 * env_height / 10, 9 * env_height / 10, 9 * env_height / 10
+    9 * height / 10, 9 * height / 10, 9 * height / 10
   in
   let ball_button_width, line_button_width, cup_button_width =
-    1 * env_width / 15, 1 * env_width / 15, 1 * env_width / 15
+    1 * width / 15, 1 * width / 15, 1 * width / 15
   in
   let ball_button_height, line_button_height, cup_button_height =
-    1 * env_height / 20, 1 * env_height / 20, 1 * env_height / 20
+    1 * height / 20, 1 * height / 20, 1 * height / 20
   in
   generate_button
     "Ball"
@@ -74,25 +73,25 @@ let create_enviornment ?(env_width = 750) ?(env_height = 500) () =
     ~y_pos:ball_button_y
     ~width:ball_button_width
     ~height:ball_button_height
-    ~color_button:white
-    ~color_text:black;
+    ~color_button:Colors.white
+    ~color_text:Colors.black;
   generate_button
     "Line"
     ~x_pos:line_button_x
     ~y_pos:line_button_y
     ~width:line_button_width
     ~height:line_button_height
-    ~color_button:white
-    ~color_text:black;
+    ~color_button:Colors.white
+    ~color_text:Colors.black;
   generate_button
     "Cup"
     ~x_pos:cup_button_x
     ~y_pos:cup_button_y
     ~width:cup_button_width
     ~height:cup_button_height
-    ~color_button:white
-    ~color_text:black;
-  Graphics.set_color white;
+    ~color_button:Colors.white
+    ~color_text:Colors.black;
+  Graphics.set_color Colors.white;
   Graphics.moveto 0 0;
   Graphics.draw_string "Current Object: Ball"
 ;;

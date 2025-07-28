@@ -3,7 +3,7 @@ open! Objects
 open! Graphics
 
 let draw_ball (ball : Ball.t) =
-  Graphics.fill_circle ball.x_pos ball.y_pos 50;
+  Graphics.fill_circle ball.x_pos ball.y_pos 10;
   print_string "Done!"
 ;;
 
@@ -15,11 +15,11 @@ let draw_line (line : Line.t) =
 
 let draw_cup (cup : Cup.t) =
   Graphics.moveto cup.x_pos cup.y_pos;
-  Graphics.lineto cup.x_pos (cup.y_pos - 100);
-  Graphics.moveto cup.x_pos (cup.y_pos - 100);
-  Graphics.lineto (cup.x_pos + 75) (cup.y_pos - 100);
-  Graphics.moveto (cup.x_pos + 75) (cup.y_pos - 100);
-  Graphics.lineto (cup.x_pos + 75) cup.y_pos;
+  Graphics.lineto cup.x_pos (cup.y_pos - 20);
+  Graphics.moveto cup.x_pos (cup.y_pos - 20);
+  Graphics.lineto (cup.x_pos + 15) (cup.y_pos - 20);
+  Graphics.moveto (cup.x_pos + 15) (cup.y_pos - 20);
+  Graphics.lineto (cup.x_pos + 15) cup.y_pos;
   print_string "Done!"
 ;;
 
@@ -45,7 +45,7 @@ let generate_button
 ;;
 
 let create_enviornment ?(env_width = 750) ?(env_height = 500) () =
-  Graphics.open_graph "first graph";
+  Graphics.open_graph " 20000 x 20000 ";
   Graphics.resize_window env_width env_height;
   let black = Graphics.rgb 000 000 000 in
   let gray = Graphics.rgb 128 128 128 in
@@ -64,7 +64,7 @@ let create_enviornment ?(env_width = 750) ?(env_height = 500) () =
     1 * env_width / 15, 1 * env_width / 15, 1 * env_width / 15
   in
   let ball_button_height, line_button_height, cup_button_height =
-    1 * env_height / 20, 1 * env_width / 15, 1 * env_width / 15
+    1 * env_height / 20, 1 * env_height / 20, 1 * env_height / 20
   in
   generate_button
     "Ball"
@@ -91,40 +91,48 @@ let create_enviornment ?(env_width = 750) ?(env_height = 500) () =
     ~color_button:white
     ~color_text:black;
   Graphics.set_color white;
+  Graphics.moveto 0 0;
   Graphics.draw_string "Current Object: Ball"
 ;;
 
-let rec handle_clicks () =
-  let event = wait_next_event [ Button_down ] in
-  (* Wait for a mouse click *)
-  if event.button
-  then (* Check if a button was pressed (i.e., a click occurred) *)
-    (
-    let click_x = event.mouse_x in
-    let click_y = event.mouse_y in
-    (* Example: If click is within a specific region, draw a circle *)
-    if
-      click_x >= ball_button_x
-      && click_x < ball_button_x + ball_button_width
-      && click_y > ball_button_y - ball_button_height
-      && click_y < ball_button_y
-    then (
-      set_color blue;
-      fill_circle click_x click_y 20;
-      print_endline "Ball Button Pressed")
-    else if
-      click_x >= line_button_x
-      && click_x < line_button_x + line_button_width
-      && click_y > line_button_y - line_button_height
-      && click_y < line_button_y
-    then ()
-    (* Continue handling clicks *))
-  else if
-    click_x >= cup_button_x
-    && click_x < cup_button_x + cup_button_width
-    && click_y > cup_button_y - cup_button_height
-    && click_y < cup_button_y
-  then ()
-  (* Continue handling clicks *)
-  else handle_clicks () (* If no button down, continue waiting for clicks *)
-;;
+(* let rec handle_clicks () =
+   let event = wait_next_event [ Button_down ] in
+   (* Wait for a mouse click *)
+   if event.button
+   then (* Check if a button was pressed (i.e., a click occurred) *)
+   (
+   let click_x = event.mouse_x in
+   let click_y = event.mouse_y in
+   (* Example: If click is within a specific region, draw a circle *)
+   if
+   click_x >= ball_button_x
+   && click_x < ball_button_x + ball_button_width
+   && click_y > ball_button_y - ball_button_height
+   && click_y < ball_button_y
+   then (
+   set_color blue;
+   fill_circle click_x click_y 20;
+   print_endline "Ball Button Pressed")
+   else if
+   click_x >= line_button_x
+   && click_x < line_button_x + line_button_width
+   && click_y > line_button_y - line_button_height
+   && click_y < line_button_y
+   then ()
+   (* Continue handling clicks *))
+   else if
+   click_x >= cup_button_x
+   && click_x < cup_button_x + cup_button_width
+   && click_y > cup_button_y - cup_button_height
+   && click_y < cup_button_y
+   then ()
+   (* Continue handling clicks *)
+   else if
+   click_x >= 0
+   && click_x < cup_button_x + cup_button_width
+   && click_y > cup_button_y - cup_button_height
+   && click_y < cup_button_y
+   then ()
+   (* Continue handling clicks *)
+   else handle_clicks () (* If no button down, continue waiting for clicks *)
+   ;; *)

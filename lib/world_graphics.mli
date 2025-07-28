@@ -1,6 +1,8 @@
 open! Core
+open! Graphics
 open! Objects
 
 val draw_ball : Ball.t -> unit
 val draw_line : Line.t -> unit
 val draw_cup : Cup.t -> unit
+val create_enviornment : ?env_width:int -> ?env_height:int -> unit -> unit

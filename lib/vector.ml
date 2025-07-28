@@ -27,6 +27,8 @@ let ( - ) { x = x1; y = y1 } { x = x2; y = y2 } : t =
 
 let ( * ) { x; y } k : t = { x = k *. x; y = k *. y }
 
+let ( / ) { x; y } k : t = { x = k /. x; y = k /. y }
+
 let multi_sum (vectors : t list) : t =
   List.fold vectors ~init:{ x = 0.0; y = 0.0 } ~f:(fun acc vector ->
     acc + vector)
@@ -63,6 +65,11 @@ let normalize { x; y } : t =
 let is_zero v1 : bool =
   let mag = mag v1 in
   Float.equal mag 0.0
+;;
+
+let is_zero v1 v2 : bool =
+  let dot_product = dot_product v1 v2 in
+  Float.equal dot_product 0.0
 ;;
 
 let rotate { x; y } ~(theta : float) : t =

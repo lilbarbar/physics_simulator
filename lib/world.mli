@@ -6,7 +6,7 @@ type t =
   ; lines : Line.t list
   ; world_state : World_state.t
   }
-[@@deriving compare, equal, sexp_of]
+[@@deriving sexp_of]
 
 val create : unit -> t
 val world_state : t -> World_state.t

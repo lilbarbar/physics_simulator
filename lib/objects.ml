@@ -1,14 +1,14 @@
 open! Core
-open! Vectors
 
 module Ball = struct
   type t =
-    { mutable center : Position.t
-    ; mutable velocity : Velocity.t
-    ; mutable net_force : Force.t
+    { mutable center : Vector.t
+    ; mutable velocity : Vector.t
+    ; mutable net_force : Vector.t
     ; mass : float
     ; radius : float
-    } [@@deriving sexp_of]
+    }
+  [@@deriving sexp_of]
 
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in
@@ -23,23 +23,26 @@ module Ball = struct
     t.velocity <- new_velocity
   ;;
 
-  let set_vel t (nv : Velocity.t) = t.velocity <- nv
-  let add_vel t (dv : Velocity.t) = t.velocity <- Vector.( + ) t.velocity dv
-  let set_pos t (np : Position.t) = t.center <- np
-  let add_pos t (dx : Position.t) = t.center <- Vector.( + ) t.center dx
-  let set_force t (nf : Force.t) = t.net_force <- nf
-  let add_force t (df : Force.t) = t.net_force <- Vector.( + ) t.net_force df
+  let set_vel t (nv : Vector.t) = t.velocity <- nv
+  let add_vel t (dv : Vector.t) = t.velocity <- Vector.( + ) t.velocity dv
+  let set_pos t (np : Vector.t) = t.center <- np
+  let add_pos t (dx : Vector.t) = t.center <- Vector.( + ) t.center dx
+  let set_force t (nf : Vector.t) = t.net_force <- nf
+
+  let add_force t (df : Vector.t) =
+    t.net_force <- Vector.( + ) t.net_force df
+  ;;
 end
 
 module Box = struct
   type t =
-    { mutable min : Position.t
-    ; mutable max : Position.t
+    { mutable min : Vector.t
+    ; mutable max : Vector.t
     ; mutable theta : float
-    ; mutable velocity : Velocity.t
-    ; mutable net_force : Force.t
+    ; mutable velocity : Vector.t
+    ; mutable net_force : Vector.t
     ; mass : float
-    } [@@deriving sexp]
+    }
 
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in
@@ -56,28 +59,31 @@ module Box = struct
     t.velocity <- new_velocity
   ;;
 
-  let set_vel t (nv : Velocity.t) = t.velocity <- nv
-  let add_vel t (dv : Velocity.t) = t.velocity <- Vector.( + ) t.velocity dv
+  let set_vel t (nv : Vector.t) = t.velocity <- nv
+  let add_vel t (dv : Vector.t) = t.velocity <- Vector.( + ) t.velocity dv
 
-  let set_pos t (np : Position.t) =
+  let set_pos t (np : Vector.t) =
     t.min <- np;
     t.max <- np
   ;;
 
-  let add_pos t (dx : Position.t) =
+  let add_pos t (dx : Vector.t) =
     t.min <- Vector.( + ) t.min dx;
     t.max <- Vector.( + ) t.max dx
   ;;
 
-  let set_force t (nf : Force.t) = t.net_force <- nf
-  let add_force t (df : Force.t) = t.net_force <- Vector.( + ) t.net_force df
+  let set_force t (nf : Vector.t) = t.net_force <- nf
+
+  let add_force t (df : Vector.t) =
+    t.net_force <- Vector.( + ) t.net_force df
+  ;;
 end
 
 module Line = struct
   type t =
-    { first_endp : Position.t
-    ; second_endp : Position.t
-    } [@@deriving sexp]
+    { first_endp : Vector.t
+    ; second_endp : Vector.t
+    }
 
   let calc_slope t =
     let ydiff = t.second_endp.y -. t.first_endp.y in
@@ -88,7 +94,7 @@ end
 
 module Cup = struct
   type t =
-    { min : Position.t
-    ; max : Position.t
+    { min : Vector.t
+    ; max : Vector.t
     }
 end

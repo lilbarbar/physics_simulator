@@ -24,7 +24,8 @@ let handle_steps (world : World.t) ~world_over =
 ;;
 
 let run () =
-  let world = World_graphics.init_exn () in
+  let world = World.create () in
+  World_graphics.init_exn ();
   World_graphics.render world;
   let world_over = ref false in
   handle_steps world ~world_over

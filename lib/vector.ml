@@ -6,14 +6,6 @@ type t =
   }
 [@@deriving compare, equal, sexp_of]
 
-let to_string { x; y } = [%string "%{x#Float} %{y#Float}"]
-
-let list_to_string ts =
-  List.map ts ~f:to_string
-  |> String.concat ~sep:"; "
-  |> Core.sprintf "[ %s ]"
-;;
-
 let of_x_major_coord (x, y) = { x; y }
 let of_x_major_coords coords = List.map coords ~f:(fun (x, y) -> { x; y })
 
@@ -26,7 +18,6 @@ let ( - ) { x = x1; y = y1 } { x = x2; y = y2 } : t =
 ;;
 
 let ( * ) { x; y } k : t = { x = k *. x; y = k *. y }
-
 let ( / ) { x; y } k : t = { x = k /. x; y = k /. y }
 
 let multi_sum (vectors : t list) : t =

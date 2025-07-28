@@ -6,7 +6,6 @@ type t =
   }
 [@@deriving compare, equal, sexp_of]
 
-val to_string : t -> string
 val list_to_string : t list -> string
 val of_x_major_coord : float * float -> t
 val of_x_major_coords : (float * float) list -> t list

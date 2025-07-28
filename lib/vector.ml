@@ -67,7 +67,7 @@ let is_zero v1 : bool =
   Float.equal mag 0.0
 ;;
 
-let is_zero v1 v2 : bool =
+let is_orthogonal v1 v2 : bool =
   let dot_product = dot_product v1 v2 in
   Float.equal dot_product 0.0
 ;;

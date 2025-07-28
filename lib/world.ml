@@ -2,14 +2,14 @@ open! Core
 open! Objects
 open! World_graphics
 
-(* open! State *)
-
 type t =
   { balls : Ball.t list
   ; lines : Line.t list
   ; cups : Cup.t list
   ; world_state : Engine_state.t
+  ; canvas : Canvas.t
   }
+[@@deriving sexp_of]
 
 let draw_all_balls t =
   List.iter t.balls ~f:(fun ball -> World_graphics.draw_ball ball)
@@ -29,7 +29,7 @@ let draw_everything t =
   draw_all_cups t
 ;;
 
-let generate_next_frame t : t =
+let gen_next_step t : t =
   let new_balls =
     List.map t.balls ~f:(fun ball ->
       let new_ball : Ball.t =
@@ -47,5 +47,20 @@ let generate_next_frame t : t =
   ; lines = t.lines
   ; cups = t.cups
   ; world_state = t.world_state
+  ; canvas = canvas
   }
+;;
+
+let create ~height ~width ~initial_snake_length =
+  let canvas = Canvas.create ~height ~width in
+  { engine_state = In_progress; canvas }
+;;
+
+let to_string { engine_state; canvas } =
+  Core.sprintf
+    !{| %{sexp:Engine_state.t}
+%{sexp:Canvas.t}
+%s |}
+    engine_state
+    canvas
 ;;

@@ -25,7 +25,7 @@ let handle_steps (game : Engine.t) ~engine_over =
 
 let run () =
   let game = Engine_graphics.init_exn () in
-  Engine_graphics.render game;
+  World_graphics.render game;
   let engine_over = ref false in
   handle_steps game ~engine_over
 ;;

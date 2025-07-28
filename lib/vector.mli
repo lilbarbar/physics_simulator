@@ -12,6 +12,7 @@ val of_x_major_coord : float * float -> t
 val of_x_major_coords : (float * float) list -> t list
 val ( + ) : t -> t -> t
 val ( - ) : t -> t -> t
+val ( * ) : t -> t -> t
 val multi_sum : t list -> t
 val dist_squared : t -> t -> float
 val dist : t -> t -> float

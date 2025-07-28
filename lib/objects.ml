@@ -8,7 +8,7 @@ module Ball = struct
     ; mutable net_force : Force.t
     ; mass : float
     ; radius : float
-    }
+    } [@@deriving sexp_of]
 
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in
@@ -39,7 +39,7 @@ module Box = struct
     ; mutable velocity : Velocity.t
     ; mutable net_force : Force.t
     ; mass : float
-    }
+    } [@@deriving sexp]
 
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in
@@ -77,7 +77,7 @@ module Line = struct
   type t =
     { first_endp : Position.t
     ; second_endp : Position.t
-    }
+    } [@@deriving sexp]
 
   let calc_slope t =
     let ydiff = t.second_endp.y -. t.first_endp.y in

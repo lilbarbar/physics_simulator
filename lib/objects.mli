@@ -7,7 +7,7 @@ module Ball : sig
     ; mutable net_force : Force.t
     ; mass : float
     ; radius : float
-    }
+    } [@@deriving sexp]
 
   val update_pos : t -> float -> unit
   val update_vel : t -> float -> unit
@@ -30,7 +30,7 @@ module Box : sig
     ; mutable velocity : Velocity.t
     ; mutable net_force : Force.t
     ; mass : float
-    }
+    } [@@deriving sexp]
 
   val update_pos : t -> float -> unit
   val update_vel : t -> float -> unit
@@ -49,7 +49,7 @@ module Line : sig
   type t =
     { first_endp : Position.t
     ; second_endp : Position.t
-    }
+    } [@@deriving sexp]
 
   val calc_slope : t -> float
 end

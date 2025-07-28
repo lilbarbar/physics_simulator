@@ -1,13 +1,13 @@
 open! Core
 
 module Position = struct
-  include Vector
+  include Vector [@@deriving sexp]
 end
 
 module Velocity = struct
-  include Vector
+  include Vector [@@deriving sexp]
 end
 
 module Force = struct
-  include Vector
+  include Vector [@@deriving sexp]
 end

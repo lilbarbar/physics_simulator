@@ -3,9 +3,11 @@ open! Objects
 open! Async
 
 type t =
-  { balls : Ball.t list
-  ; lines : Line.t list
-  ; world_state : World_state.t
+  { mutable balls : Ball.t list
+  ; mutable lines : Line.t list
+  ; mutable cups : Cup.t list
+  ; mutable world_state : World_state.t
+  ; mutable click_state : Click_state.t
   }
 
 val create : unit -> t

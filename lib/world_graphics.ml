@@ -34,18 +34,18 @@ let draw_objects (t : World.t) =
   List.iter t.lines ~f:(fun line -> draw_line line);
 ;;
 
-let gen_button text ~x_pos ~y_pos ~width ~height =
+let generate_button text ~x_pos ~y_pos ~width ~height =
   Graphics.set_color Colors.white;
   Graphics.fill_rect x_pos y_pos width height;
   let text_width, text_height = Graphics.text_size text in
   Graphics.moveto
     (x_pos + (width / 2) - (text_width / 2))
-    (y_pos - (height / 2) - (text_height / 2));
+    (y_pos + (height / 2) - (text_height / 2));
   Graphics.set_color Colors.black;
   Graphics.draw_string text
 ;;
 
-let create_env ?(width = 750) ?(height = 500) () =
+let create_environment ?(width = 750) ?(height = 500) () =
   Graphics.open_graph " 20000 x 20000 ";
   Graphics.resize_window width height;
   Graphics.set_color black;
@@ -62,19 +62,19 @@ let create_env ?(width = 750) ?(height = 500) () =
     1 * width / 15, 1 * width / 15, 1 * width / 15
   in
   let button_height = 1 * height / 20 in
-  gen_button
+  generate_button
     "Ball"
     ~x_pos:ball_button_x
     ~y_pos:ball_button_y
     ~width:ball_button_width
     ~height:button_height;
-  gen_button
+  generate_button
     "Line"
     ~x_pos:line_button_x
     ~y_pos:line_button_y
     ~width:line_button_width
     ~height:button_height;
-  gen_button
+  generate_button
     "Cup"
     ~x_pos:cup_button_x
     ~y_pos:cup_button_y
@@ -82,5 +82,5 @@ let create_env ?(width = 750) ?(height = 500) () =
     ~height:button_height
 ;;
 
-let init_exn () = create_env ()
+let init_exn () = create_environment ()
 let render world = ignore world

@@ -8,7 +8,6 @@ module Ball = struct
     ; mass : float
     ; radius : float
     }
-  [@@deriving sexp_of]
 
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in
@@ -42,7 +41,7 @@ module Box = struct
     ; mutable velocity : Vector.t
     ; mutable net_force : Vector.t
     ; mass : float
-    }
+    } 
 
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in

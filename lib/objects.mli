@@ -6,7 +6,6 @@ module Ball : sig
     ; mass : float
     ; radius : float
     }
-  [@@deriving sexp]
 
   val update_pos : t -> float -> unit
   val update_vel : t -> float -> unit
@@ -17,7 +16,6 @@ module Ball : sig
   val set_force : t -> Vector.t -> unit
   val add_force : t -> Vector.t -> unit
 end
-[@@deriving sexp]
 
 module Box : sig
   type t =
@@ -28,7 +26,6 @@ module Box : sig
     ; mutable net_force : Vector.t
     ; mass : float
     }
-  [@@deriving sexp]
 
   val update_pos : t -> float -> unit
   val update_vel : t -> float -> unit
@@ -45,7 +42,6 @@ module Line : sig
     { first_endp : Vector.t
     ; second_endp : Vector.t
     }
-  [@@deriving sexp]
 
   val calc_slope : t -> float
 end

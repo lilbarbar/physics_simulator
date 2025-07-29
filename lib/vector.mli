@@ -6,9 +6,6 @@ type t =
   }
 [@@deriving compare, equal, sexp_of]
 
-val list_to_string : t list -> string
-val of_x_major_coord : float * float -> t
-val of_x_major_coords : (float * float) list -> t list
 val ( + ) : t -> t -> t
 val ( - ) : t -> t -> t
 val ( * ) : t -> float -> t
@@ -23,5 +20,5 @@ val mag : t -> float
 val angle_between : t -> t -> float
 val normalize : t -> t
 val is_zero : t -> bool
-val is_orthgonal : t -> t -> bool
+val is_orthogonal : t -> t -> bool
 val rotate : t -> theta:float -> t

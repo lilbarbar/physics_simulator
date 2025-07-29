@@ -6,9 +6,6 @@ type t =
   }
 [@@deriving compare, equal, sexp_of]
 
-let of_x_major_coord (x, y) = { x; y }
-let of_x_major_coords coords = List.map coords ~f:(fun (x, y) -> { x; y })
-
 let ( + ) { x = x1; y = y1 } { x = x2; y = y2 } : t =
   { x = x1 +. x2; y = y1 +. y2 }
 ;;

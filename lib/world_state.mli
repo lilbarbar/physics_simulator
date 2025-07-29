@@ -1,4 +1,5 @@
 open! Core
+open! Async
 
 type t =
   | In_progress

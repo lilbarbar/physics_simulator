@@ -1,3 +1,5 @@
+open! Core
+
 module Ball : sig
   type t =
     { mutable center : Vector.t

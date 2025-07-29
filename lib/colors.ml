@@ -1,4 +1,5 @@
 open! Graphics
+open! Async
 
 let black = Graphics.rgb 000 000 000
 let gray = Graphics.rgb 128 128 128

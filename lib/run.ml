@@ -49,26 +49,6 @@ let rec handle_clicks () : unit =
   else handle_clicks ()
 ;;
 
-(* let handle_key t key =
-  let dir = Direction.of_key key in
-  match dir with None -> () | Some dir -> Snake.set_direction t.snake dir
-;; *)
-
-(* let read_key () =
-  if Graphics.key_pressed () then Some (Graphics.read_key ()) else None
-;; *)
-
-
-(* let handle_keys (game : Game.t) ~game_over =
-  every ~stop:game_over 0.001 ~f:(fun () ->
-    match Snake_graphics.read_key () with
-    | None -> ()
-    | Some key ->
-      Game.handle_key game key;
-      Snake_graphics.render game)
-;; *)
-
-
 let run () =
   let world = World.create () in
   World_graphics.init_exn ();

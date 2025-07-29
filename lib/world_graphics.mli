@@ -1,6 +1,7 @@
 open! Core
 open! Graphics
 open! Objects
+open! Async
 
 val draw_ball : Ball.t -> unit
 val draw_line : Line.t -> unit

@@ -1,4 +1,5 @@
 open! Graphics
+open! Async
 
 val black : color
 val gray  : color

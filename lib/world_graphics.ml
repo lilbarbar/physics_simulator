@@ -83,4 +83,4 @@ let create_env ?(width = 750) ?(height = 500) () =
 ;;
 
 let init_exn () = create_env ()
-let render world  = ignore world
+let render world = ignore world

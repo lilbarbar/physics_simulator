@@ -55,5 +55,5 @@ let run () =
   World_graphics.render world;
   let world_over = ref false in
   handle_steps world ~world_over;
-  handle_clicks ()
+  (* handle_clicks () *)
 ;;

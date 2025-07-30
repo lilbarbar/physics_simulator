@@ -17,6 +17,7 @@ module Ball : sig
   val add_pos : t -> Vector.t -> unit
   val set_force : t -> Vector.t -> unit
   val add_force : t -> Vector.t -> unit
+  val create : center:Vector.t -> mass:float -> radius:float -> t
 end
 
 module Box : sig
@@ -37,6 +38,7 @@ module Box : sig
   val add_pos : t -> Vector.t -> unit
   val set_force : t -> Vector.t -> unit
   val add_force : t -> Vector.t -> unit
+  val create : min:Vector.t -> max:Vector.t -> mass:float -> t
 end
 
 module Line : sig
@@ -46,6 +48,7 @@ module Line : sig
     }
 
   val calc_slope : t -> float
+  val create : first_endp:Vector.t -> second_endp:Vector.t -> t
 end
 
 module Cup : sig
@@ -53,11 +56,12 @@ module Cup : sig
     { min : Vector.t
     ; max : Vector.t
     }
+
+  val create : min:Vector.t -> max:Vector.t -> t
 end
 
 type t =
   | Ball
-  | Line 
-  | Cup 
-  | Box 
-
+  | Line
+  | Cup
+  | Box

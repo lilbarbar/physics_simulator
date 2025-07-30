@@ -33,13 +33,18 @@ module Canvas : sig
   type t =
     { height : int
     ; width : int
-    ; balls : Ball.t list
-    ; lines : Line.t list
-    ; cups : Cup.t list
+    ; mutable balls : Ball.t list
+    ; mutable lines : Line.t list
+    ; mutable cups : Cup.t list
+    ; mutable boxes : Box.t list
     }
 
   val create : height:int -> width:int -> t
   val in_bounds : t -> int -> int -> bool
+  val add_ball : t -> Ball.t -> unit
+  val add_line : t -> Line.t -> unit
+  val add_box : t -> Box.t -> unit
+  val add_cup : t -> Cup.t -> unit
 end
 
 module UI : sig

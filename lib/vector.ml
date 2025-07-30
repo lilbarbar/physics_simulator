@@ -75,5 +75,5 @@ module Plain = struct
   type t =
     { x : int
     ; y : int
-    }
+    } [@@deriving compare, equal, sexp_of]
 end

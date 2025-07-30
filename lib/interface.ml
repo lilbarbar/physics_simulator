@@ -28,6 +28,7 @@ module Panel = struct
     }
 
   let create ~height ~width =
+    let width = width * 3 in
     let ball_x, line_x, cup_x =
       7 * width / 10, 4 * width / 5, 9 * width / 10
     in
@@ -63,16 +64,21 @@ module Canvas = struct
   type t =
     { height : int
     ; width : int
-    ; balls : Ball.t list
-    ; lines : Line.t list
-    ; cups : Cup.t list
+    ; mutable balls : Ball.t list
+    ; mutable lines : Line.t list
+    ; mutable cups : Cup.t list
+    ; mutable boxes : Box.t list
     }
 
   let create ~height ~width =
-    { height; width; balls = []; lines = []; cups = [] }
+    { height; width; balls = []; lines = []; cups = []; boxes = [] }
   ;;
 
   let in_bounds t x y = x >= 0 && x < t.width && y >= 0 && y < t.height
+  let add_ball t obj = t.balls <- t.balls @ [ obj ]; print_endline "add_ball"
+  let add_line t obj = t.lines <- t.lines @ [ obj ]
+  let add_cup t obj = t.cups <- t.cups @ [ obj ]
+  let add_box t obj = t.boxes <- t.boxes @ [ obj ]
 end
 
 module UI = struct

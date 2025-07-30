@@ -86,6 +86,16 @@ module Box = struct
   let add_force t (df : Vector.t) =
     t.net_force <- Vector.( + ) t.net_force df
   ;;
+
+  let create ~min ~max ~mass =
+    { min
+    ; max
+    ; mass
+    ; theta = 0.0
+    ; velocity = Vector.zero ()
+    ; net_force = Vector.zero ()
+    }
+  ;;
 end
 
 module Line = struct
@@ -99,6 +109,8 @@ module Line = struct
     let xdiff = t.second_endp.x -. t.first_endp.x in
     ydiff /. xdiff
   ;;
+
+  let create ~first_endp ~second_endp = { first_endp; second_endp }
 end
 
 module Cup = struct
@@ -106,6 +118,8 @@ module Cup = struct
     { min : Vector.t
     ; max : Vector.t
     }
+
+  let create ~min ~max = { min; max }
 end
 
 type t =

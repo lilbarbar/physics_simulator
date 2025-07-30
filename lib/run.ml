@@ -21,16 +21,15 @@ let handle_steps (world : World.t) ~world_over =
     World.step world;
     print_endline "stepping";
     World_graphics.render world;
-    match World.world_state world with
+    match world.world_state with
     | Paused | Failure -> world_over := true
     | In_progress | Clear -> ())
 ;;
 
 let run () =
   let world = World.create () in
-  World_graphics.init_exn ();
+  World_graphics.init_exn world.ui;
   World_graphics.render world;
   let world_over = ref false in
-  handle_steps world ~world_over;
-  handle_click
+  handle_steps world ~world_over
 ;;

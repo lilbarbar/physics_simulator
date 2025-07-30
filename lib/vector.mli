@@ -23,3 +23,11 @@ val normalize : t -> t
 val is_zero : t -> bool
 val is_orthogonal : t -> t -> bool
 val rotate : t -> theta:float -> t
+
+module Plain : sig
+  type t =
+    { x : int
+    ; y : int
+    }
+  [@@deriving compare, equal, sexp_of]
+end

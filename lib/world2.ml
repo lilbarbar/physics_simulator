@@ -1,4 +1,4 @@
-open! Core
+(* open! Core
 open Async
 open! Objects
 open! World_graphics
@@ -181,4 +181,4 @@ then
     draw_everything new_t;
     print_string "lol";
     handle_clicks new_t (* If no button down, continue waiting for clicks *))
-;;
+;; *)

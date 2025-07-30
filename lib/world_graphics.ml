@@ -29,9 +29,9 @@ let draw_cup (cup : Cup.t) : unit =
   Graphics.lineto x2 y1
 ;;
 
-let draw_objects (t : World.t) =
+let draw_objects (t : Interface.Canvas.t) =
   List.iter t.balls ~f:(fun ball -> draw_ball ball);
-  List.iter t.lines ~f:(fun line -> draw_line line);
+  List.iter t.lines ~f:(fun line -> draw_line line)
 ;;
 
 let generate_button text ~x_pos ~y_pos ~width ~height =
@@ -45,42 +45,21 @@ let generate_button text ~x_pos ~y_pos ~width ~height =
   Graphics.draw_string text
 ;;
 
-let create_environment ?(width = 750) ?(height = 500) () =
+let create_environment (ui : Interface.UI.t) =
   Graphics.open_graph " 20000 x 20000 ";
-  Graphics.resize_window width height;
+  Graphics.resize_window ui.width ui.height;
   Graphics.set_color black;
-  Graphics.fill_rect 0 0 width height;
+  Graphics.fill_rect 0 0 ui.width ui.height;
   Graphics.set_color Colors.gray;
-  Graphics.fill_rect (2 * width / 3) 0 (1 * width / 3) height;
-  let ball_button_x, line_button_x, cup_button_x =
-    7 * width / 10, 4 * width / 5, 9 * width / 10
-  in
-  let ball_button_y, line_button_y, cup_button_y =
-    9 * height / 10, 9 * height / 10, 9 * height / 10
-  in
-  let ball_button_width, line_button_width, cup_button_width =
-    1 * width / 15, 1 * width / 15, 1 * width / 15
-  in
-  let button_height = 1 * height / 20 in
-  generate_button
-    "Ball"
-    ~x_pos:ball_button_x
-    ~y_pos:ball_button_y
-    ~width:ball_button_width
-    ~height:button_height;
-  generate_button
-    "Line"
-    ~x_pos:line_button_x
-    ~y_pos:line_button_y
-    ~width:line_button_width
-    ~height:button_height;
-  generate_button
-    "Cup"
-    ~x_pos:cup_button_x
-    ~y_pos:cup_button_y
-    ~width:cup_button_width
-    ~height:button_height
+  Graphics.fill_rect ui.canvas.width 0 ui.panel.width ui.panel.height;
+  List.iter ui.panel.buttons ~f:(fun button ->
+    generate_button
+      button.id
+      ~x_pos:button.position.x
+      ~y_pos:button.position.y
+      ~width:button.width
+      ~height:button.height)
 ;;
 
-let init_exn () = create_environment ()
+let init_exn (ui : Interface.UI.t) = create_environment ui
 let render world = ignore world

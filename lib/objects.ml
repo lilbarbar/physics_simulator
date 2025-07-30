@@ -42,7 +42,7 @@ module Box = struct
     ; mutable velocity : Vector.t
     ; mutable net_force : Vector.t
     ; mass : float
-    } 
+    }
 
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in

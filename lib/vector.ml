@@ -68,3 +68,10 @@ let rotate { x; y } ~(theta : float) : t =
   let rot_y = (x *. sin_theta) +. (y *. cos_theta) in
   { x = rot_x; y = rot_y }
 ;;
+
+module Plain = struct
+  type t =
+    { x : int
+    ; y : int
+    }
+end

@@ -69,6 +69,8 @@ let rotate { x; y } ~(theta : float) : t =
   { x = rot_x; y = rot_y }
 ;;
 
+let zero () = { x = 0.0; y = 0.0 }
+
 module Plain = struct
   type t =
     { x : int

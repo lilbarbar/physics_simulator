@@ -10,6 +10,14 @@ module Button = struct
     }
 
   let create ~height ~width ~position ~id = { height; width; position; id }
+
+  let in_bounds t x y =
+    let btn_min_x = t.position.x in
+    let btn_max_x = btn_min_x + t.width in
+    let btn_min_y = t.position.y in
+    let btn_max_y = btn_min_y + t.height in
+    x >= btn_min_x && x <= btn_max_x && y >= btn_min_y && y <= btn_max_y
+  ;;
 end
 
 module Panel = struct
@@ -63,6 +71,8 @@ module Canvas = struct
   let create ~height ~width =
     { height; width; balls = []; lines = []; cups = [] }
   ;;
+
+  let in_bounds t x y = x >= 0 && x < t.width && y >= 0 && y < t.height
 end
 
 module UI = struct

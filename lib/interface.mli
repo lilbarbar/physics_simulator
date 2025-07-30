@@ -15,6 +15,8 @@ module Button : sig
     -> position:Vector.Plain.t
     -> id:string
     -> t
+
+  val in_bounds : t -> int -> int -> bool
 end
 
 module Panel : sig
@@ -37,6 +39,7 @@ module Canvas : sig
     }
 
   val create : height:int -> width:int -> t
+  val in_bounds : t -> int -> int -> bool
 end
 
 module UI : sig

@@ -23,6 +23,7 @@ val normalize : t -> t
 val is_zero : t -> bool
 val is_orthogonal : t -> t -> bool
 val rotate : t -> theta:float -> t
+val zero : unit -> t
 
 module Plain : sig
   type t =

@@ -54,3 +54,10 @@ module Cup : sig
     ; max : Vector.t
     }
 end
+
+type t =
+  | Ball
+  | Line 
+  | Cup 
+  | Box 
+

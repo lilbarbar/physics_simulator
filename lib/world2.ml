@@ -1,8 +1,7 @@
-(* open! Core
+open! Core
 open Async
 open! Objects
 open! World_graphics
-open! Type_of_object
 open! Graphics
 
 (* type t =
@@ -45,24 +44,33 @@ open! Graphics
   }
 ;; *)
 
-let handle_create_object t obj event =
+let on_button_click (t: World.t) id = 
+  match id with 
+  | "create-ball-btn" -> t.click_state <- Click_state.Create_object_now Objects.Ball
+  | "create-line-btn" -> t.click_state <- Click_state.Create_object_now Objects.Line
+  | "create-cup-btn" -> t.click_state <- Click_state.Create_object_now Objects.Cup
+  | _ -> ()
+
+let handle_create_object (t : World.t) obj x y =
+  if Interface.Canvas.in_bounds t.ui.canvas x y then (
+    
+  )
+;;
+
+let handle_drag_object t obj x y =
   ignore t;
   ignore obj
 ;;
 
-let handle_drag_object t obj event =
+let handle_select_object t obj x y =
   ignore t;
   ignore obj
 ;;
 
-let handle_select_object t obj event =
-  ignore t;
-  ignore obj
-;;
-
-let handle_free_state t event = 
-  ignore t;
-  ignore event
+let handle_free_state (t : World.t) x y = 
+  let buttons = t.ui.panel.buttons in
+  List.iter buttons ~f:(fun button -> 
+    if Interface.Button.in_bounds button x y then on_button_click t button.id)
 ;;
 
 let rec handle_click (t : World.t) : unit Deferred.t =
@@ -73,11 +81,13 @@ let rec handle_click (t : World.t) : unit Deferred.t =
   in
   if event.button
   then (
+    let x = event.mouse_x in
+    let y = event.mouse_y in
     (match t.click_state with
-     | Create_new_object obj -> handle_create_object t obj event
-     | Drag_current_object obj -> handle_drag_object t obj event
-     | Select_current_object obj -> handle_select_object t obj event
-     | Free_state -> handle_free_state t event);
+     | Click_state.Create_object_now obj -> handle_create_object t obj x y
+     | Click_state.Drag_current_object obj -> handle_drag_object t obj x y
+     | Click_state.Select_current_object obj -> handle_select_object t obj x y
+     | Click_state.Free_state -> handle_free_state t x y);
     handle_click t)
   else handle_click t
 ;;
@@ -181,4 +191,4 @@ then
     draw_everything new_t;
     print_string "lol";
     handle_clicks new_t (* If no button down, continue waiting for clicks *))
-;; *)
+;;

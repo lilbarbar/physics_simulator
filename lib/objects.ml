@@ -32,6 +32,15 @@ module Ball = struct
   let add_force t (df : Vector.t) =
     t.net_force <- Vector.( + ) t.net_force df
   ;;
+
+  let create ~center ~mass ~radius =
+    { center
+    ; mass
+    ; radius
+    ; velocity = Vector.zero ()
+    ; net_force = Vector.zero ()
+    }
+  ;;
 end
 
 module Box = struct
@@ -98,3 +107,9 @@ module Cup = struct
     ; max : Vector.t
     }
 end
+
+type t =
+  | Ball
+  | Line
+  | Cup
+  | Box

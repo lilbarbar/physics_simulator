@@ -127,3 +127,76 @@ type t =
   | Line
   | Cup
   | Box
+
+
+let ball_and_ball (ball1 : Ball.t) (ball2 : Ball.t) : bool =
+  Float.compare
+    (Vector.mag (Vector.( - ) ball1.center ball2.center))
+    (ball1.radius +. ball2.radius)
+  <= 0
+;;
+
+let ball_and_line (ball : Ball.t) (line : Line.t) : bool =
+  let vector_A = Vector.( - ) ball.center line.first_endp in
+  let vector_B = Vector.( - ) line.second_endp line.first_endp in
+  let projection =
+    Vector.( * )
+      vector_B
+      (Vector.dot_product vector_A vector_B
+       /. Vector.dot_product vector_B vector_B)
+  in
+  let ortho_to_projection = Vector.( - ) vector_A projection in
+  Float.compare (Vector.mag ortho_to_projection) ball.radius <= 0
+;;
+
+let ball_in_cup (ball : Ball.t) (cup : Cup.t) : bool =
+  Float.compare ball.center.x (cup.min.x +. ball.radius) > 0
+  && Float.compare ball.center.x (cup.max.x -. ball.radius) < 0
+  && Float.compare ball.center.y (cup.min.y +. ball.radius) > 0
+  && Float.compare ball.center.y (cup.max.y -. ball.radius) < 0
+;;
+
+let ball_resting_in_cup (ball : Ball.t) (cup : Cup.t) : bool =
+  Float.compare ball.center.x (cup.min.x +. ball.radius) > 0
+  && Float.compare ball.center.x (cup.max.x -. ball.radius) < 0
+  && Float.compare ball.center.y (cup.min.y +. ball.radius) = 0
+;;
+
+let ball_collides_with_cup_wall (ball : Ball.t) (cup : Cup.t) : bool =
+  (Float.compare ball.center.y (cup.min.y +. ball.radius) > 0
+   && Float.compare ball.center.y (cup.max.y -. ball.radius) < 0)
+  && (Float.compare ball.center.x (cup.min.x -. ball.radius) = 0
+      || Float.compare ball.center.x (cup.min.x +. ball.radius) = 0
+      || Float.compare ball.center.x (cup.max.x -. ball.radius) = 0
+      || Float.compare ball.center.x (cup.max.x +. ball.radius) = 0)
+;;
+
+let ball_collides_with_cup_bottom (ball : Ball.t) (cup : Cup.t) : bool =
+  (Float.compare ball.center.x (cup.min.x +. ball.radius) >= 0
+   && Float.compare ball.center.x (cup.max.x -. ball.radius) <= 0)
+  && Float.compare ball.center.y (cup.min.y -. ball.radius) = 0
+;;
+
+let ball_collides_with_box (ball : Ball.t) (box : Box.t) : bool =
+  let cond1 =
+    Float.compare (ball.center.x +. ball.radius) box.min.x = 0
+    && Float.compare ball.center.y box.min.y > 0
+    && Float.compare ball.center.y box.max.y < 0
+  in
+  let cond2 =
+    Float.compare (ball.center.y -. ball.radius) box.max.y = 0
+    && Float.compare ball.center.x box.min.x > 0
+    && Float.compare ball.center.x box.max.x < 0
+  in
+  let cond3 =
+    Float.compare (ball.center.x -. ball.radius) box.min.x = 0
+    && Float.compare ball.center.y box.min.y > 0
+    && Float.compare ball.center.y box.max.y < 0
+  in
+  let cond4 =
+    Float.compare (ball.center.y +. ball.radius) box.min.y = 0
+    && Float.compare ball.center.x box.min.x > 0
+    && Float.compare ball.center.x box.max.x < 0
+  in
+  cond1 || cond2 || cond3 || cond4
+;;

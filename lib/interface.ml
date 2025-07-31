@@ -1,5 +1,6 @@
 open! Core
 open! Objects
+open! Graphics
 
 module Button = struct
   type t =
@@ -8,10 +9,11 @@ module Button = struct
     ; position : Vector.Plain.t
     ; id : string
     ; display_text : string
+    ; color : Graphics.color
     }
 
-  let create ~height ~width ~position ~id ~display_text =
-    { height; width; position; id; display_text }
+  let create ~height ~width ~position ~id ~display_text ~color =
+    { height; width; position; id; display_text; color }
   ;;
 
   let in_bounds t x y =
@@ -30,48 +32,52 @@ module Panel = struct
     ; buttons : Button.t list
     }
 
-  let create ~height ~width =
-    let width = width * 3 in
-    let ball_x, line_x, cup_x =
-      7 * width / 10, 4 * width / 5, 9 * width / 10
+  let create ~height:ui_height ~width =
+    let ui_width = width * 3 in
+    let create_ball_x, create_line_x, create_cup_x =
+      7 * ui_width / 10, 4 * ui_width / 5, 9 * ui_width / 10
     in
-    let y = 9 * height / 10 in
-    let box_y = y - 50 in
-    let button_width = 1 * width / 15 in
-    let button_height = 1 * height / 20 in
+    let create_ball_line_cup_y = 9 * ui_height / 10 in
+    let create_box_y = create_ball_line_cup_y - 50 in
+    let create_btn_width = ui_width / 15 in
+    let create_btn_height = ui_height / 20 in
     let ball_button =
       Button.create
-        ~height:button_height
-        ~width:button_width
-        ~position:{ x = ball_x; y }
+        ~height:create_btn_height
+        ~width:create_btn_width
+        ~position:{ x = create_ball_x; y = create_ball_line_cup_y }
         ~id:"create-ball-btn"
         ~display_text:"Ball"
+        ~color:Graphics.white
     in
     let line_button =
       Button.create
-        ~height:button_height
-        ~width:button_width
-        ~position:{ x = line_x; y }
+        ~height:create_btn_height
+        ~width:create_btn_width
+        ~position:{ x = create_line_x; y = create_ball_line_cup_y }
         ~id:"create-line-btn"
         ~display_text:"Line"
+        ~color:Graphics.white
     in
     let cup_button =
       Button.create
-        ~height:button_height
-        ~width:button_width
-        ~position:{ x = cup_x; y }
+        ~height:create_btn_height
+        ~width:create_btn_width
+        ~position:{ x = create_cup_x; y = create_ball_line_cup_y }
         ~id:"create-cup-btn"
         ~display_text:"Cup"
+        ~color:Graphics.white
     in
     let box_button =
       Button.create
-        ~height:button_height
-        ~width:button_width
-        ~position:{ x = ball_x; y = box_y }
+        ~height:create_btn_height
+        ~width:create_btn_width
+        ~position:{ x = create_ball_x; y = create_box_y }
         ~id:"create-box-btn"
         ~display_text:"Box"
+        ~color:Graphics.white
     in
-    { height
+    { height = ui_height
     ; width
     ; buttons = [ ball_button; box_button; cup_button; line_button ]
     }

@@ -6,7 +6,7 @@ let draw_ball (ball : Ball.t) =
   let x = Int.of_float ball.center.x in
   let y = Int.of_float ball.center.y in
   let radius = Int.of_float ball.radius in
-  Graphics.set_color Colors.blue;
+  Graphics.set_color Graphics.blue;
   Graphics.fill_circle x y radius
 ;;
 
@@ -16,7 +16,7 @@ let draw_line (line : Line.t) : unit =
   let x2 = Int.of_float line.second_endp.x in
   let y2 = Int.of_float line.second_endp.y in
   Graphics.set_line_width 2;
-  Graphics.set_color Colors.green;
+  Graphics.set_color Graphics.green;
   Graphics.moveto x1 y1;
   Graphics.lineto x2 y2
 ;;
@@ -27,7 +27,7 @@ let draw_cup (cup : Cup.t) : unit =
   let x2 = Int.of_float cup.max.x in
   let y2 = Int.of_float cup.max.y in
   Graphics.set_line_width 2;
-  Graphics.set_color Colors.red;
+  Graphics.set_color Graphics.red;
   Graphics.moveto x1 y2;
   Graphics.lineto x1 y1;
   Graphics.lineto x2 y1;
@@ -51,18 +51,18 @@ let draw_objects (ui : Interface.UI.t) =
 ;;
 
 let generate_button text ~x_pos ~y_pos ~width ~height =
-  Graphics.set_color Colors.white;
+  Graphics.set_color Graphics.white;
   Graphics.fill_rect x_pos y_pos width height;
   let text_width, text_height = Graphics.text_size text in
   Graphics.moveto
     (x_pos + (width / 2) - (text_width / 2))
     (y_pos + (height / 2) - (text_height / 2));
-  Graphics.set_color Colors.black;
+  Graphics.set_color Graphics.black;
   Graphics.draw_string text
 ;;
 
 let draw_panel (ui : Interface.UI.t) =
-  Graphics.set_color Colors.gray;
+  Graphics.set_color (Graphics.rgb 128 128 128);
   Graphics.fill_rect ui.canvas.width 0 ui.panel.width ui.panel.height;
   List.iter ui.panel.buttons ~f:(fun button ->
     generate_button
@@ -76,7 +76,7 @@ let draw_panel (ui : Interface.UI.t) =
 let create_environment (ui : Interface.UI.t) =
   Graphics.open_graph " 20000 x 20000 ";
   Graphics.resize_window ui.width ui.height;
-  Graphics.set_color black;
+  Graphics.set_color Graphics.black;
   Graphics.fill_rect 0 0 ui.width ui.height;
   draw_panel ui
 ;;

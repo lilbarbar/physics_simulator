@@ -128,6 +128,22 @@ type t =
   | Cup
   | Box
 
+let find_min_max
+      (first_selected_pos : Vector.t)
+      (second_selected_pos : Vector.t)
+  =
+  let x1 = first_selected_pos.x in
+  let x2 = second_selected_pos.x in
+  let y1 = first_selected_pos.y in
+  let y2 = second_selected_pos.y in
+  let smaller_x = Float.min x1 x2 in
+  let larger_x = Float.max x1 x2 in
+  let smaller_y = Float.min y1 y2 in
+  let larger_y = Float.max y1 y2 in
+  let max_pos = { Vector.x = larger_x; Vector.y = larger_y } in
+  let min_pos = { Vector.x = smaller_x; Vector.y = smaller_y } in
+  min_pos, max_pos
+;;
 
 let ball_and_ball (ball1 : Ball.t) (ball2 : Ball.t) : bool =
   Float.compare

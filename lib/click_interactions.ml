@@ -16,7 +16,6 @@ let on_button_click (t : World.t) id =
 ;;
 
 let handle_select_object_first (t : World.t) (obj : Objects.t) x y =
-  print_endline "handle_create_object";
   let first_selected_pos =
     { Vector.x = Float.of_int x; y = Float.of_int y }
   in
@@ -50,6 +49,9 @@ let handle_select_object_final (t : World.t) obj first_selected_pos x y =
     { Vector.x = Float.of_int x; y = Float.of_int y }
   in
   let dist = Vector.dist first_selected_pos second_selected_pos in
+  let min_pos, max_pos =
+    Objects.find_min_max first_selected_pos second_selected_pos
+  in
   if Interface.Canvas.in_bounds t.ui.canvas x y
   then (
     match obj with
@@ -63,17 +65,12 @@ let handle_select_object_final (t : World.t) obj first_selected_pos x y =
       Interface.Canvas.add_ball t.ui.canvas new_ball;
       t.click_state <- Click_state.Create_object_select_first Objects.Ball
     | Objects.Cup ->
-      let new_cup =
-        Objects.Cup.create ~min:first_selected_pos ~max:second_selected_pos
-      in
+      let new_cup = Objects.Cup.create ~min:min_pos ~max:max_pos in
       Interface.Canvas.add_cup t.ui.canvas new_cup;
       t.click_state <- Click_state.Create_object_select_first Objects.Cup
     | Objects.Box ->
       let new_box =
-        Objects.Box.create
-          ~min:first_selected_pos
-          ~max:second_selected_pos
-          ~mass:10.0
+        Objects.Box.create ~min:min_pos ~max:max_pos ~mass:10.0
       in
       Interface.Canvas.add_box t.ui.canvas new_box;
       t.click_state <- Click_state.Create_object_select_first Objects.Box
@@ -112,7 +109,6 @@ let rec handle_click (t : World.t) : unit Deferred.t =
   let%bind event =
     In_thread.run (fun () ->
       let event = wait_next_event [ Button_down ] in
-      print_endline "Click down";
       event)
   in
   if event.button

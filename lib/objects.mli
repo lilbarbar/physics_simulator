@@ -65,3 +65,5 @@ type t =
   | Line
   | Cup
   | Box
+
+val find_min_max : Vector.t -> Vector.t -> Vector.t * Vector.t

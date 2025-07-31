@@ -145,6 +145,12 @@ let find_min_max
   min_pos, max_pos
 ;;
 
+let ball_point_collide (ball : Ball.t) (point: Vector.t) = 
+  let ball_point_dist_squared = Vector.dist_squared ball.center point in
+  let radius_squared = ball.radius *. ball.radius in
+  
+  ball_point_dist_squared <= radius_squared
+
 let ball_and_ball (ball1 : Ball.t) (ball2 : Ball.t) : bool =
   Float.compare
     (Vector.mag (Vector.( - ) ball1.center ball2.center))

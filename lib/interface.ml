@@ -41,7 +41,7 @@ module Panel = struct
     let create_box_y = create_ball_line_cup_y - 50 in
     let create_btn_width = ui_width / 15 in
     let create_btn_height = ui_height / 20 in
-    let ball_button =
+    let create_ball_btn =
       Button.create
         ~height:create_btn_height
         ~width:create_btn_width
@@ -50,7 +50,7 @@ module Panel = struct
         ~display_text:"Ball"
         ~color:Graphics.white
     in
-    let line_button =
+    let create_line_btn =
       Button.create
         ~height:create_btn_height
         ~width:create_btn_width
@@ -59,7 +59,7 @@ module Panel = struct
         ~display_text:"Line"
         ~color:Graphics.white
     in
-    let cup_button =
+    let create_cup_btn =
       Button.create
         ~height:create_btn_height
         ~width:create_btn_width
@@ -68,7 +68,7 @@ module Panel = struct
         ~display_text:"Cup"
         ~color:Graphics.white
     in
-    let box_button =
+    let create_box_btn =
       Button.create
         ~height:create_btn_height
         ~width:create_btn_width
@@ -77,9 +77,28 @@ module Panel = struct
         ~display_text:"Box"
         ~color:Graphics.white
     in
+    let clear_btn_width = 8 * width / 10 in
+    let clear_btn_height = create_btn_height in
+    let clear_x = create_ball_x in
+    let clear_y = create_box_y - 50 in
+    let clear_btn =
+      Button.create
+        ~height:clear_btn_height
+        ~width:clear_btn_width
+        ~position:{ x = clear_x; y = clear_y }
+        ~id:"clear-btn"
+        ~display_text:"Clear"
+        ~color:Graphics.red
+    in
     { height = ui_height
     ; width
-    ; buttons = [ ball_button; box_button; cup_button; line_button ]
+    ; buttons =
+        [ create_ball_btn
+        ; create_box_btn
+        ; create_cup_btn
+        ; create_line_btn
+        ; clear_btn
+        ]
     }
   ;;
 end
@@ -108,6 +127,14 @@ module Canvas = struct
   let add_line t obj = t.lines <- t.lines @ [ obj ]
   let add_cup t obj = t.cups <- t.cups @ [ obj ]
   let add_box t obj = t.boxes <- t.boxes @ [ obj ]
+
+  let clear t =
+    print_endline "clear";
+    t.balls <- [];
+    t.cups <- [];
+    t.lines <- [];
+    t.boxes <- []
+  ;;
 end
 
 module UI = struct

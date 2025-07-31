@@ -12,6 +12,9 @@ let on_button_click (t : World.t) id =
     t.click_state <- Click_state.Create_object_select_first Objects.Cup
   | "create-box-btn" ->
     t.click_state <- Click_state.Create_object_select_first Objects.Box
+  | "clear-btn" ->
+    Interface.Canvas.clear t.ui.canvas;
+    t.click_state <- Click_state.Free_state
   | _ -> ()
 ;;
 
@@ -99,22 +102,24 @@ let handle_select_object t obj x y =
 ;;
 
 let handle_free_state (t : World.t) x y =
-  print_endline "handle_free_state";
   let buttons = t.ui.panel.buttons in
   List.iter buttons ~f:(fun button ->
-    if Interface.Button.in_bounds button x y then on_button_click t button.id)
+    if Interface.Button.in_bounds button x y then on_button_click t button.id);
+  List.iter t.ui.canvas.balls ~f:(fun ball -> 
+    
+    )
 ;;
 
 let rec handle_click (t : World.t) : unit Deferred.t =
   let%bind event =
     In_thread.run (fun () ->
-      let event = wait_next_event [ Button_down ] in
+      let event = wait_next_event [ Button_down; Button_up ] in
       event)
   in
+  let x = event.mouse_x in
+  let y = event.mouse_y in
   if event.button
   then (
-    let x = event.mouse_x in
-    let y = event.mouse_y in
     (match t.click_state with
      | Click_state.Create_object_select_first obj ->
        handle_select_object_first t obj x y
@@ -126,5 +131,16 @@ let rec handle_click (t : World.t) : unit Deferred.t =
      | Click_state.Free_state -> handle_free_state t x y
      | _ -> ());
     handle_click t)
-  else handle_click t
+  else (
+    (match t.click_state with
+     | Click_state.Create_object_select_first obj ->
+       handle_select_object_first t obj x y
+     | Click_state.Create_object_select_final (obj, first_selected_pos) ->
+       handle_select_object_final t obj first_selected_pos x y
+     | Click_state.Drag_current_object obj -> handle_drag_object t obj x y
+     | Click_state.Select_current_object obj ->
+       handle_select_object t obj x y
+     | Click_state.Free_state -> handle_free_state t x y
+     | _ -> ());
+    handle_click t)
 ;;

@@ -49,6 +49,7 @@ module Canvas : sig
   val add_line : t -> Line.t -> unit
   val add_box : t -> Box.t -> unit
   val add_cup : t -> Cup.t -> unit
+  val clear : t -> unit
 end
 
 module UI : sig

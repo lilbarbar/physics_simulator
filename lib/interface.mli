@@ -7,6 +7,7 @@ module Button : sig
     ; width : int
     ; position : Vector.Plain.t
     ; id : string
+    ; display_text : string
     }
 
   val create
@@ -14,6 +15,7 @@ module Button : sig
     -> width:int
     -> position:Vector.Plain.t
     -> id:string
+    -> display_text:string
     -> t
 
   val in_bounds : t -> int -> int -> bool

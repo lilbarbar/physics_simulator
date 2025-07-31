@@ -43,11 +43,11 @@ let draw_box (box : Box.t) : unit =
   Graphics.fill_rect x1 y1 (x2 - x1) (y2 - y1)
 ;;
 
-let draw_objects (t : Interface.Canvas.t) =
-  List.iter t.balls ~f:(fun ball -> draw_ball ball);
-  List.iter t.lines ~f:(fun line -> draw_line line);
-  List.iter t.cups ~f:(fun cup -> draw_cup cup);
-  List.iter t.boxes ~f:(fun box -> draw_box box)
+let draw_objects (ui : Interface.UI.t) =
+  List.iter ui.canvas.balls ~f:(fun ball -> draw_ball ball);
+  List.iter ui.canvas.lines ~f:(fun line -> draw_line line);
+  List.iter ui.canvas.cups ~f:(fun cup -> draw_cup cup);
+  List.iter ui.canvas.boxes ~f:(fun box -> draw_box box)
 ;;
 
 let generate_button text ~x_pos ~y_pos ~width ~height =
@@ -61,21 +61,29 @@ let generate_button text ~x_pos ~y_pos ~width ~height =
   Graphics.draw_string text
 ;;
 
-let create_environment (ui : Interface.UI.t) =
-  Graphics.open_graph " 20000 x 20000 ";
-  Graphics.resize_window ui.width ui.height;
-  Graphics.set_color black;
-  Graphics.fill_rect 0 0 ui.width ui.height;
+let draw_panel (ui : Interface.UI.t) =
   Graphics.set_color Colors.gray;
   Graphics.fill_rect ui.canvas.width 0 ui.panel.width ui.panel.height;
   List.iter ui.panel.buttons ~f:(fun button ->
     generate_button
-      button.id
+      button.display_text
       ~x_pos:button.position.x
       ~y_pos:button.position.y
       ~width:button.width
       ~height:button.height)
 ;;
 
+let create_environment (ui : Interface.UI.t) =
+  Graphics.open_graph " 20000 x 20000 ";
+  Graphics.resize_window ui.width ui.height;
+  Graphics.set_color black;
+  Graphics.fill_rect 0 0 ui.width ui.height;
+  draw_panel ui
+;;
+
 let init_exn (ui : Interface.UI.t) = create_environment ui
-let render (canvas : Interface.Canvas.t) = draw_objects canvas
+
+let render (ui : Interface.UI.t) =
+  draw_objects ui;
+  draw_panel ui
+;;

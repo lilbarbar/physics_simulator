@@ -19,7 +19,7 @@ let every seconds ~f ~stop =
 let handle_steps (world : World.t) ~world_over =
   every ~stop:world_over 0.1 ~f:(fun () ->
     World.step world;
-    World_graphics.render world.ui.canvas;
+    World_graphics.render world.ui;
     match world.world_state with
     | Paused | Failure -> world_over := true
     | In_progress | Clear -> ())
@@ -28,7 +28,7 @@ let handle_steps (world : World.t) ~world_over =
 let run () =
   let world = World.create () in
   World_graphics.init_exn world.ui;
-  World_graphics.render world.ui.canvas;
+  World_graphics.render world.ui;
   let world_over = ref false in
   handle_steps world ~world_over;
   Click_interactions.handle_click world

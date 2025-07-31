@@ -7,9 +7,12 @@ module Button = struct
     ; width : int
     ; position : Vector.Plain.t
     ; id : string
+    ; display_text : string
     }
 
-  let create ~height ~width ~position ~id = { height; width; position; id }
+  let create ~height ~width ~position ~id ~display_text =
+    { height; width; position; id; display_text }
+  ;;
 
   let in_bounds t x y =
     let btn_min_x = t.position.x in
@@ -42,6 +45,7 @@ module Panel = struct
         ~width:button_width
         ~position:{ x = ball_x; y }
         ~id:"create-ball-btn"
+        ~display_text:"Ball"
     in
     let line_button =
       Button.create
@@ -49,6 +53,7 @@ module Panel = struct
         ~width:button_width
         ~position:{ x = line_x; y }
         ~id:"create-line-btn"
+        ~display_text:"Line"
     in
     let cup_button =
       Button.create
@@ -56,6 +61,7 @@ module Panel = struct
         ~width:button_width
         ~position:{ x = cup_x; y }
         ~id:"create-cup-btn"
+        ~display_text:"Cup"
     in
     let box_button =
       Button.create
@@ -63,8 +69,12 @@ module Panel = struct
         ~width:button_width
         ~position:{ x = ball_x; y = box_y }
         ~id:"create-box-btn"
+        ~display_text:"Box"
     in
-    { height; width; buttons = [ ball_button; box_button; cup_button; line_button ] }
+    { height
+    ; width
+    ; buttons = [ ball_button; box_button; cup_button; line_button ]
+    }
   ;;
 end
 

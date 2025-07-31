@@ -2,19 +2,36 @@ open! Core
 open! Async
 open! Graphics
 
+let handle_state_on_button_click (t : World.t) btn_click_state id =
+  if Click_state.equal t.click_state btn_click_state
+  then t.click_state <- Click_state.Free_state
+  else t.click_state <- btn_click_state;
+;;
+
 let on_button_click (t : World.t) id =
   match id with
   | "create-ball-btn" ->
-    if t.click = 
-    t.click_state <- Click_state.Create_object_select_first Objects.Ball
+    let create_ball_btn_state =
+      Click_state.Create_object_select_first Objects.Ball
+    in
+    handle_state_on_button_click t create_ball_btn_state id
   | "create-line-btn" ->
-    t.click_state <- Click_state.Create_object_select_first Objects.Line
+    let create_line_btn_state =
+      Click_state.Create_object_select_first Objects.Line
+    in
+    handle_state_on_button_click t create_line_btn_state id
   | "create-cup-btn" ->
-    t.click_state <- Click_state.Create_object_select_first Objects.Cup
+    let create_cup_btn_state =
+      Click_state.Create_object_select_first Objects.Cup
+    in
+    handle_state_on_button_click t create_cup_btn_state id
   | "create-box-btn" ->
-    t.click_state <- Click_state.Create_object_select_first Objects.Box
+    let create_box_btn_state =
+      Click_state.Create_object_select_first Objects.Box
+    in
+    handle_state_on_button_click t create_box_btn_state id
   | "clear-btn" ->
-    (* Interface.Canvas.clear t.ui.canvas; *)
+    Interface.Canvas.clear t.ui.canvas;
     t.click_state <- Click_state.Free_state
   | _ -> ()
 ;;
@@ -106,12 +123,11 @@ let handle_free_state (t : World.t) x y =
   List.iter buttons ~f:(fun button ->
     if Interface.Button.in_bounds button x y then on_button_click t button.id);
   List.iter t.ui.canvas.balls ~f:(fun ball ->
-    print_endline "handle_free_state_here";
     let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
     if Objects.ball_point_collide ball point
-    then print_endline "ball_point_collide_success";
-    t.click_state
-    <- Click_state.Drag_current_object Objects.ObjectSelector.(Ball ball))
+    then
+      t.click_state
+      <- Click_state.Drag_current_object Objects.ObjectSelector.(Ball ball))
 ;;
 
 let rec handle_click (t : World.t) : unit Deferred.t =
@@ -132,8 +148,7 @@ let rec handle_click (t : World.t) : unit Deferred.t =
      | Click_state.Drag_current_object obj -> handle_drag_object t obj x y
      | Click_state.Select_current_object obj ->
        handle_select_object t obj x y
-     | Click_state.Free_state -> handle_free_state t x y
-     | _ -> ());
+     | Click_state.Free_state -> handle_free_state t x y);
     handle_click t)
   else (
     (match t.click_state with

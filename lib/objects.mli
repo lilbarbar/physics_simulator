@@ -68,6 +68,8 @@ type t =
   | Cup
   | Box
 
+val equal : t -> t -> bool
+
 module ObjectSelector : sig
   type t =
     | Ball of Ball.t

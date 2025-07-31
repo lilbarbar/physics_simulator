@@ -130,13 +130,11 @@ type t =
   | Cup
   | Box
 
-let equal_objects (a : t) (b : t) : bool =
+let equal (a : t) (b : t) : bool =
   match a, b with
-  | Ball, Ball
-  | Line, Line
-  | Cup, Cup
-  | Box, Box -> true
+  | Ball, Ball | Line, Line | Cup, Cup | Box, Box -> true
   | _, _ -> false
+;;
 
 module ObjectSelector = struct
   type t =

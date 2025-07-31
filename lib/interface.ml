@@ -9,7 +9,7 @@ module Button = struct
     ; position : Vector.Plain.t
     ; id : string
     ; display_text : string
-    ; color : Graphics.color
+    ; mutable color : Graphics.color
     }
 
   let create ~height ~width ~position ~id ~display_text ~color =

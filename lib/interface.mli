@@ -8,7 +8,7 @@ module Button : sig
     ; position : Vector.Plain.t
     ; id : string
     ; display_text : string
-    ; color : Graphics.color
+    ; mutable color : Graphics.color
     }
 
   val create

@@ -10,6 +10,8 @@ let on_button_click (t : World.t) id =
     t.click_state <- Click_state.Create_object_select_first Objects.Line
   | "create-cup-btn" ->
     t.click_state <- Click_state.Create_object_select_first Objects.Cup
+  | "create-box-btn" ->
+    t.click_state <- Click_state.Create_object_select_first Objects.Box
   | _ -> ()
 ;;
 
@@ -32,11 +34,15 @@ let handle_select_object_first (t : World.t) (obj : Objects.t) x y =
     | Objects.Line ->
       t.click_state
       <- Click_state.Create_object_select_final
-           (Objects.Ball, first_selected_pos)
+           (Objects.Line, first_selected_pos)
     | Objects.Cup ->
       t.click_state
       <- Click_state.Create_object_select_final
-           (Objects.Ball, first_selected_pos))
+           (Objects.Cup, first_selected_pos))
+  else
+    List.iter t.ui.panel.buttons ~f:(fun button ->
+      if Interface.Button.in_bounds button x y
+      then on_button_click t button.id)
 ;;
 
 let handle_select_object_final (t : World.t) obj first_selected_pos x y =
@@ -49,22 +55,40 @@ let handle_select_object_final (t : World.t) obj first_selected_pos x y =
     match obj with
     | Objects.Ball ->
       let new_ball =
-        Objects.Ball.create ~center:first_selected_pos ~mass:10.0 ~radius:dist
+        Objects.Ball.create
+          ~center:first_selected_pos
+          ~mass:10.0
+          ~radius:dist
       in
-      Interface.Canvas.add_ball t.ui.canvas new_ball
+      Interface.Canvas.add_ball t.ui.canvas new_ball;
+      t.click_state <- Click_state.Create_object_select_first Objects.Ball
     | Objects.Cup ->
-      let new_cup = Objects.Cup.create ~min:first_selected_pos ~max:second_selected_pos in
-      Interface.Canvas.add_cup t.ui.canvas new_cup
+      let new_cup =
+        Objects.Cup.create ~min:first_selected_pos ~max:second_selected_pos
+      in
+      Interface.Canvas.add_cup t.ui.canvas new_cup;
+      t.click_state <- Click_state.Create_object_select_first Objects.Cup
     | Objects.Box ->
       let new_box =
-        Objects.Box.create ~min:first_selected_pos ~max:second_selected_pos ~mass:10.0
+        Objects.Box.create
+          ~min:first_selected_pos
+          ~max:second_selected_pos
+          ~mass:10.0
       in
-      Interface.Canvas.add_box t.ui.canvas new_box
+      Interface.Canvas.add_box t.ui.canvas new_box;
+      t.click_state <- Click_state.Create_object_select_first Objects.Box
     | Objects.Line ->
       let new_line =
-        Objects.Line.create ~first_endp:first_selected_pos ~second_endp:second_selected_pos
+        Objects.Line.create
+          ~first_endp:first_selected_pos
+          ~second_endp:second_selected_pos
       in
-      Interface.Canvas.add_line t.ui.canvas new_line)
+      Interface.Canvas.add_line t.ui.canvas new_line;
+      t.click_state <- Click_state.Create_object_select_first Objects.Line)
+  else
+    List.iter t.ui.panel.buttons ~f:(fun button ->
+      if Interface.Button.in_bounds button x y
+      then on_button_click t button.id)
 ;;
 
 let handle_drag_object t obj x y =

@@ -36,11 +36,7 @@ let draw_box (box : Box.t) : unit =
   let y1 = Int.of_float box.min.y in
   let x2 = Int.of_float box.max.x in
   let y2 = Int.of_float box.max.y in
-  Graphics.moveto x1 y1;
-  Graphics.lineto x1 y2;
-  Graphics.lineto x2 y2;
-  Graphics.lineto x2 y1;
-  Graphics.lineto x1 y1
+  Graphics.fill_rect x1 y1 (x2 - x1) (y2 - y1)
 ;;
 
 let draw_objects (t : Interface.Canvas.t) =

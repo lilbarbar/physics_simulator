@@ -33,6 +33,7 @@ module Panel = struct
       7 * width / 10, 4 * width / 5, 9 * width / 10
     in
     let y = 9 * height / 10 in
+    let box_y = y - 50 in
     let button_width = 1 * width / 15 in
     let button_height = 1 * height / 20 in
     let ball_button =
@@ -56,7 +57,14 @@ module Panel = struct
         ~position:{ x = cup_x; y }
         ~id:"create-cup-btn"
     in
-    { height; width; buttons = [ ball_button; line_button; cup_button ] }
+    let box_button =
+      Button.create
+        ~height:button_height
+        ~width:button_width
+        ~position:{ x = ball_x; y = box_y }
+        ~id:"create-box-btn"
+    in
+    { height; width; buttons = [ ball_button; box_button; cup_button; line_button ] }
   ;;
 end
 
@@ -75,7 +83,12 @@ module Canvas = struct
   ;;
 
   let in_bounds t x y = x >= 0 && x < t.width && y >= 0 && y < t.height
-  let add_ball t obj = t.balls <- t.balls @ [ obj ]; print_endline "add_ball"
+
+  let add_ball t obj =
+    t.balls <- t.balls @ [ obj ];
+    print_endline "add_ball"
+  ;;
+
   let add_line t obj = t.lines <- t.lines @ [ obj ]
   let add_cup t obj = t.cups <- t.cups @ [ obj ]
   let add_box t obj = t.boxes <- t.boxes @ [ obj ]

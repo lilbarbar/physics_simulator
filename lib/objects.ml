@@ -110,6 +110,8 @@ module Line = struct
     ydiff /. xdiff
   ;;
 
+  let length t = Vector.dist t.first_endp t.second_endp
+  let length_squared t = Vector.dist_squared t.first_endp t.second_endp
   let create ~first_endp ~second_endp = { first_endp; second_endp }
 end
 
@@ -145,11 +147,29 @@ let find_min_max
   min_pos, max_pos
 ;;
 
-let ball_point_collide (ball : Ball.t) (point: Vector.t) = 
+let ball_point_collide (ball : Ball.t) (point : Vector.t) =
   let ball_point_dist_squared = Vector.dist_squared ball.center point in
   let radius_squared = ball.radius *. ball.radius in
-  
-  ball_point_dist_squared <= radius_squared
+  Float.( <= ) ball_point_dist_squared radius_squared
+;;
+
+let box_point_collide (box : Box.t) (point : Vector.t) =
+  Float.( <= ) point.x box.max.x
+  && Float.( >= ) point.x box.min.x
+  && Float.( <= ) point.y box.max.y
+  && Float.( >= ) point.y box.min.y
+;;
+
+let line_point_collide (line : Line.t) (point : Vector.t) =
+  let tolerance = 2.0 in
+  let dist_first_endp = Vector.dist_squared line.first_endp point in
+  let dist_second_endp = Vector.dist_squared line.second_endp point in
+  let line_length = Line.length_squared line in
+  let dist_diff =
+    Float.abs (dist_first_endp +. dist_second_endp -. line_length)
+  in
+  Float.( <= ) dist_diff (tolerance *. tolerance *. 2.0)
+;;
 
 let ball_and_ball (ball1 : Ball.t) (ball2 : Ball.t) : bool =
   Float.compare

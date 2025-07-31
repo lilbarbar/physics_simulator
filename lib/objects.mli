@@ -48,6 +48,8 @@ module Line : sig
     }
 
   val calc_slope : t -> float
+  val length : t -> float
+  val length_squared : t -> float
   val create : first_endp:Vector.t -> second_endp:Vector.t -> t
 end
 

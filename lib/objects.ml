@@ -130,6 +130,22 @@ type t =
   | Cup
   | Box
 
+let equal_objects (a : t) (b : t) : bool =
+  match a, b with
+  | Ball, Ball
+  | Line, Line
+  | Cup, Cup
+  | Box, Box -> true
+  | _, _ -> false
+
+module ObjectSelector = struct
+  type t =
+    | Ball of Ball.t
+    | Line of Line.t
+    | Cup of Cup.t
+    | Box of Box.t
+end
+
 let find_min_max
       (first_selected_pos : Vector.t)
       (second_selected_pos : Vector.t)
@@ -148,6 +164,7 @@ let find_min_max
 ;;
 
 let ball_point_collide (ball : Ball.t) (point : Vector.t) =
+  print_endline "ball_point_collide";
   let ball_point_dist_squared = Vector.dist_squared ball.center point in
   let radius_squared = ball.radius *. ball.radius in
   Float.( <= ) ball_point_dist_squared radius_squared

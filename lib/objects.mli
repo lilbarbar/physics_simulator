@@ -68,4 +68,15 @@ type t =
   | Cup
   | Box
 
+module ObjectSelector : sig
+  type t =
+    | Ball of Ball.t
+    | Line of Line.t
+    | Cup of Cup.t
+    | Box of Box.t
+end
+
 val find_min_max : Vector.t -> Vector.t -> Vector.t * Vector.t
+val ball_point_collide : Ball.t -> Vector.t -> bool
+val box_point_collide : Box.t -> Vector.t -> bool
+val line_point_collide : Line.t -> Vector.t -> bool

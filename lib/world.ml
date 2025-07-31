@@ -1,6 +1,7 @@
 open! Core
 open! Objects
 open! Async
+open! Graphics
 
 type t =
   { mutable world_state : World_state.t
@@ -15,4 +16,14 @@ let create () =
   }
 ;;
 
-let step t = ignore t
+let step t =
+  let mouse_x, mouse_y = mouse_pos () in
+  match t.click_state with
+  | Click_state.Drag_current_object obj ->
+    (match obj with
+     | Ball ball ->
+       ball.center
+       <- { Vector.x = Float.of_int mouse_x; y = Float.of_int mouse_y }
+     | _ -> ())
+  | _ -> ()
+;;

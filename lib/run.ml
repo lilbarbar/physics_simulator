@@ -17,7 +17,7 @@ let every seconds ~f ~stop =
 ;;
 
 let handle_steps (world : World.t) ~world_over =
-  every ~stop:world_over 0.1 ~f:(fun () ->
+  every ~stop:world_over 0.001 ~f:(fun () ->
     World.step world;
     World_graphics.render world.ui;
     match world.world_state with

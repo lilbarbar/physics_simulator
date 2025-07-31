@@ -43,19 +43,11 @@ let draw_box (box : Box.t) : unit =
   Graphics.fill_rect x1 y1 (x2 - x1) (y2 - y1)
 ;;
 
-let draw_arc () =
-  Graphics.set_color Graphics.white;
-  (* Graphics.draw_arc 200 200 100 100 180 360 *)
-  Graphics.moveto 200 200;
-  Graphics.curveto (250, 250) (300, 150) (350, 350)
-
 let draw_objects (ui : Interface.UI.t) =
   List.iter ui.canvas.balls ~f:(fun ball -> draw_ball ball);
   List.iter ui.canvas.lines ~f:(fun line -> draw_line line);
   List.iter ui.canvas.cups ~f:(fun cup -> draw_cup cup);
   List.iter ui.canvas.boxes ~f:(fun box -> draw_box box)
-  (* draw_arc () *)
-
 ;;
 
 let generate_button ~display_text ~x ~y ~width ~height ~color =

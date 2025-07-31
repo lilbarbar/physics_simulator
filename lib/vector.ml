@@ -70,10 +70,14 @@ let rotate { x; y } ~(theta : float) : t =
 ;;
 
 let zero () = { x = 0.0; y = 0.0 }
+let translate_x { x; y } dx = { x = x +. dx; y }
+let translate_y { x; y } dy = { x; y = y +. dy }
+let translate_xy { x; y } dx dy = { x = x +. dx; y = y +. dy }
 
 module Plain = struct
   type t =
     { x : int
     ; y : int
-    } [@@deriving compare, equal, sexp_of]
+    }
+  [@@deriving compare, equal, sexp_of]
 end

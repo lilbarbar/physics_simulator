@@ -5,7 +5,7 @@ open! Graphics
 let handle_state_on_button_click (t : World.t) btn_click_state id =
   if Click_state.equal t.click_state btn_click_state
   then t.click_state <- Click_state.Free_state
-  else t.click_state <- btn_click_state;
+  else t.click_state <- btn_click_state
 ;;
 
 let on_button_click (t : World.t) id =
@@ -127,7 +127,13 @@ let handle_free_state (t : World.t) x y =
     if Objects.ball_point_collide ball point
     then
       t.click_state
-      <- Click_state.Drag_current_object Objects.ObjectSelector.(Ball ball))
+      <- Click_state.Drag_current_object Objects.ObjectSelector.(Ball ball));
+  List.iter t.ui.canvas.boxes ~f:(fun box ->
+    let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
+    if Objects.box_point_collide box point
+    then
+      t.click_state
+      <- Click_state.Drag_current_object Objects.ObjectSelector.(Box box))
 ;;
 
 let rec handle_click (t : World.t) : unit Deferred.t =

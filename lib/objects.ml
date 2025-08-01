@@ -183,7 +183,7 @@ let box_point_collide (box : Box.t) (point : Vector.t) =
   && Float.( >= ) point.y box.min.y
 ;;
 
-let cup_point_collide (cup : Cup.t) (point : Vector.t) =
+let cup_point_collide (cup : Box.t) (point : Vector.t) =
   Float.( <= ) point.x cup.max.x
   && Float.( >= ) point.x cup.min.x
   && Float.( <= ) point.y cup.max.y

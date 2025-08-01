@@ -16,6 +16,12 @@ let create () =
   }
 ;;
 
+let step_click_state_display_text t =
+  List.iter t.ui.panel.text_boxes ~f:(fun text_box ->
+    if String.equal text_box.id "click_state_text"
+    then text_box.display_text <- Click_state.to_string t.click_state)
+;;
+
 let step_drag_object t =
   let mouse_x, mouse_y = mouse_pos () in
   let current_mouse_pos =
@@ -76,4 +82,7 @@ let step_drag_object t =
   | _ -> ()
 ;;
 
-let step t = step_drag_object t
+let step t =
+  step_drag_object t;
+  step_click_state_display_text t
+;;

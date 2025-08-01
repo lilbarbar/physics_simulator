@@ -132,17 +132,26 @@ module Cup = struct
   let create ~min ~max = { min; max }
 end
 
-type t =
-  | Ball
-  | Line
-  | Cup
-  | Box
+module ObjectTypeSelector = struct
+  type t =
+    | Ball
+    | Line
+    | Cup
+    | Box
 
-let equal (a : t) (b : t) : bool =
-  match a, b with
-  | Ball, Ball | Line, Line | Cup, Cup | Box, Box -> true
-  | _, _ -> false
-;;
+  let to_string = function
+    | Ball -> "Ball"
+    | Line -> "Line"
+    | Cup -> "Cup"
+    | Box -> "Box"
+  ;;
+
+  let equal (a : t) (b : t) : bool =
+    match a, b with
+    | Ball, Ball | Line, Line | Cup, Cup | Box, Box -> true
+    | _, _ -> false
+  ;;
+end
 
 module ObjectSelector = struct
   type t =
@@ -150,6 +159,13 @@ module ObjectSelector = struct
     | Line of Line.t
     | Cup of Cup.t
     | Box of Box.t
+
+  let to_string = function
+    | Ball _ -> "Ball"
+    | Line _ -> "Line"
+    | Cup _ -> "Cup"
+    | Box _ -> "Box"
+  ;;
 end
 
 let find_min_max
@@ -183,7 +199,7 @@ let box_point_collide (box : Box.t) (point : Vector.t) =
   && Float.( >= ) point.y box.min.y
 ;;
 
-let cup_point_collide (cup : Box.t) (point : Vector.t) =
+let cup_point_collide (cup : Cup.t) (point : Vector.t) =
   Float.( <= ) point.x cup.max.x
   && Float.( >= ) point.x cup.min.x
   && Float.( <= ) point.y cup.max.y

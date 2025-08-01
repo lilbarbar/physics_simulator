@@ -1,6 +1,7 @@
 open! Core
 open! Async
 open! Graphics
+open! Objects
 
 let handle_state_on_button_click (t : World.t) btn_click_state id =
   if Click_state.equal t.click_state btn_click_state
@@ -12,22 +13,22 @@ let on_button_click (t : World.t) id =
   match id with
   | "create-ball-btn" ->
     let create_ball_btn_state =
-      Click_state.Create_object_select_first Objects.Ball
+      Click_state.Create_object_select_first ObjectTypeSelector.Ball
     in
     handle_state_on_button_click t create_ball_btn_state id
   | "create-line-btn" ->
     let create_line_btn_state =
-      Click_state.Create_object_select_first Objects.Line
+      Click_state.Create_object_select_first ObjectTypeSelector.Line
     in
     handle_state_on_button_click t create_line_btn_state id
   | "create-cup-btn" ->
     let create_cup_btn_state =
-      Click_state.Create_object_select_first Objects.Cup
+      Click_state.Create_object_select_first ObjectTypeSelector.Cup
     in
     handle_state_on_button_click t create_cup_btn_state id
   | "create-box-btn" ->
     let create_box_btn_state =
-      Click_state.Create_object_select_first Objects.Box
+      Click_state.Create_object_select_first ObjectTypeSelector.Box
     in
     handle_state_on_button_click t create_box_btn_state id
   | "clear-btn" ->
@@ -36,29 +37,30 @@ let on_button_click (t : World.t) id =
   | _ -> ()
 ;;
 
-let handle_select_object_first (t : World.t) (obj : Objects.t) x y =
+let handle_select_object_first (t : World.t) (obj : ObjectTypeSelector.t) x y
+  =
   let first_selected_pos =
     { Vector.x = Float.of_int x; y = Float.of_int y }
   in
   if Interface.Canvas.in_bounds t.ui.canvas x y
   then (
     match obj with
-    | Objects.Ball ->
+    | ObjectTypeSelector.Ball ->
       t.click_state
       <- Click_state.Create_object_select_final
-           (Objects.Ball, first_selected_pos)
-    | Objects.Box ->
+           (ObjectTypeSelector.Ball, first_selected_pos)
+    | ObjectTypeSelector.Box ->
       t.click_state
       <- Click_state.Create_object_select_final
-           (Objects.Box, first_selected_pos)
-    | Objects.Line ->
+           (ObjectTypeSelector.Box, first_selected_pos)
+    | ObjectTypeSelector.Line ->
       t.click_state
       <- Click_state.Create_object_select_final
-           (Objects.Line, first_selected_pos)
-    | Objects.Cup ->
+           (ObjectTypeSelector.Line, first_selected_pos)
+    | ObjectTypeSelector.Cup ->
       t.click_state
       <- Click_state.Create_object_select_final
-           (Objects.Cup, first_selected_pos))
+           (ObjectTypeSelector.Cup, first_selected_pos))
   else
     List.iter t.ui.panel.buttons ~f:(fun button ->
       if Interface.Button.in_bounds button x y
@@ -71,33 +73,30 @@ let handle_select_object_final (t : World.t) obj first_selected_pos x y =
   in
   let dist = Vector.dist first_selected_pos second_selected_pos in
   let min_pos, max_pos =
-    Objects.find_min_max first_selected_pos second_selected_pos
+    find_min_max first_selected_pos second_selected_pos
   in
   if Interface.Canvas.in_bounds t.ui.canvas x y
   then (
     match obj with
-    | Objects.Ball ->
+    | ObjectTypeSelector.Ball ->
       let new_ball =
-        Objects.Ball.create
-          ~center:first_selected_pos
-          ~mass:10.0
-          ~radius:dist
+        Ball.create ~center:first_selected_pos ~mass:10.0 ~radius:dist
       in
       Interface.Canvas.add_ball t.ui.canvas new_ball;
       t.click_state <- Click_state.Free_state
-    | Objects.Cup ->
+    | ObjectTypeSelector.Cup ->
       let new_cup = Objects.Cup.create ~min:min_pos ~max:max_pos in
       Interface.Canvas.add_cup t.ui.canvas new_cup;
       t.click_state <- Click_state.Free_state
-    | Objects.Box ->
+    | ObjectTypeSelector.Box ->
       let new_box =
         Objects.Box.create ~min:min_pos ~max:max_pos ~mass:10.0
       in
       Interface.Canvas.add_box t.ui.canvas new_box;
       t.click_state <- Click_state.Free_state
-    | Objects.Line ->
+    | ObjectTypeSelector.Line ->
       let new_line =
-        Objects.Line.create
+        Line.create
           ~first_endp:first_selected_pos
           ~second_endp:second_selected_pos
       in
@@ -124,28 +123,28 @@ let handle_free_state (t : World.t) x y =
     if Interface.Button.in_bounds button x y then on_button_click t button.id);
   List.iter t.ui.canvas.balls ~f:(fun ball ->
     let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
-    if Objects.ball_point_collide ball point
+    if ball_point_collide ball point
     then
       t.click_state
-      <- Click_state.Drag_current_object Objects.ObjectSelector.(Ball ball));
+      <- Click_state.Drag_current_object ObjectSelector.(Ball ball));
   List.iter t.ui.canvas.boxes ~f:(fun box ->
     let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
-    if Objects.box_point_collide box point
+    if box_point_collide box point
     then
       t.click_state
-      <- Click_state.Drag_current_object Objects.ObjectSelector.(Box box));
+      <- Click_state.Drag_current_object ObjectSelector.(Box box));
   List.iter t.ui.canvas.lines ~f:(fun line ->
     let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
-    if Objects.line_point_collide line point
+    if line_point_collide line point
     then
       t.click_state
-      <- Click_state.Drag_current_object Objects.ObjectSelector.(Line line));
+      <- Click_state.Drag_current_object ObjectSelector.(Line line));
   List.iter t.ui.canvas.cups ~f:(fun cup ->
     let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
-    if Objects.cup_point_collide cup point
+    if cup_point_collide cup point
     then
       t.click_state
-      <- Click_state.Drag_current_object Objects.ObjectSelector.(Cup cup))
+      <- Click_state.Drag_current_object ObjectSelector.(Cup cup))
 ;;
 
 let rec handle_click (t : World.t) : unit Deferred.t =

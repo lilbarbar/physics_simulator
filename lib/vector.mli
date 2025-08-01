@@ -27,6 +27,7 @@ val translate_x : t -> float -> t
 val translate_y : t -> float -> t
 val translate_xy : t -> float -> float -> t
 val zero : unit -> t
+val to_string : t -> string
 
 module Plain : sig
   type t =

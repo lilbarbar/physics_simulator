@@ -23,11 +23,32 @@ module Button : sig
   val in_bounds : t -> int -> int -> bool
 end
 
+module TextBox : sig
+  type t =
+    { height : int
+    ; width : int
+    ; position : Vector.Plain.t
+    ; id : string
+    ; mutable display_text : string
+    }
+
+  val create
+    :  height:int
+    -> width:int
+    -> position:Vector.Plain.t
+    -> id:string
+    -> display_text:string
+    -> t
+
+  val update_text : t -> display_text:string -> unit
+end
+
 module Panel : sig
   type t =
     { height : int
     ; width : int
     ; buttons : Button.t list
+    ; text_boxes : TextBox.t list
     }
 
   val create : height:int -> width:int -> t

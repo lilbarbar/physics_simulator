@@ -50,7 +50,24 @@ let draw_objects (ui : Interface.UI.t) =
   List.iter ui.canvas.boxes ~f:(fun box -> draw_box box)
 ;;
 
-let generate_button ~display_text ~x ~y ~width ~height ~color =
+let draw_text_box ~display_text ~x ~y ~width ~height =
+  let text_width, text_height = Graphics.text_size display_text in
+  Graphics.moveto x (y + (height / 2) - (text_height / 2));
+  Graphics.set_color Graphics.black;
+  Graphics.draw_string display_text
+;;
+
+let draw_text_boxes (ui : Interface.UI.t) =
+  List.iter ui.panel.text_boxes ~f:(fun text_box ->
+    draw_text_box
+      ~display_text:text_box.display_text
+      ~x:text_box.position.x
+      ~y:text_box.position.y
+      ~width:text_box.width
+      ~height:text_box.height)
+;;
+
+let draw_button ~display_text ~x ~y ~width ~height ~color =
   Graphics.set_color color;
   Graphics.fill_rect x y width height;
   let text_width, text_height = Graphics.text_size display_text in
@@ -61,16 +78,9 @@ let generate_button ~display_text ~x ~y ~width ~height ~color =
   Graphics.draw_string display_text
 ;;
 
-let draw_canvas (ui : Interface.UI.t) =
-  Graphics.set_color Graphics.black;
-  Graphics.fill_rect 0 0 ui.width ui.height
-;;
-
-let draw_panel (ui : Interface.UI.t) =
-  Graphics.set_color (Graphics.rgb 128 128 128);
-  Graphics.fill_rect ui.canvas.width 0 ui.panel.width ui.panel.height;
+let draw_buttons (ui : Interface.UI.t) =
   List.iter ui.panel.buttons ~f:(fun button ->
-    generate_button
+    draw_button
       ~display_text:button.display_text
       ~x:button.position.x
       ~y:button.position.y
@@ -79,17 +89,29 @@ let draw_panel (ui : Interface.UI.t) =
       ~color:button.color)
 ;;
 
-let create_environment (ui : Interface.UI.t) =
+let draw_canvas (ui : Interface.UI.t) =
+  Graphics.set_color Graphics.black;
+  Graphics.fill_rect 0 0 ui.width ui.height;
+  draw_objects ui
+;;
+
+let draw_panel (ui : Interface.UI.t) =
+  Graphics.set_color (Graphics.rgb 128 128 128);
+  Graphics.fill_rect ui.canvas.width 0 ui.panel.width ui.panel.height;
+  draw_buttons ui;
+  draw_text_boxes ui
+;;
+
+let draw_ui (ui : Interface.UI.t) =
   Graphics.open_graph " 20000 x 20000 ";
   Graphics.resize_window ui.width ui.height;
   draw_canvas ui;
   draw_panel ui
 ;;
 
-let init_exn (ui : Interface.UI.t) = create_environment ui
+let init_exn (ui : Interface.UI.t) = draw_ui ui
 
 let render (ui : Interface.UI.t) =
   draw_canvas ui;
-  draw_objects ui;
   draw_panel ui
 ;;

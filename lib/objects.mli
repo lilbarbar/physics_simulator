@@ -65,13 +65,16 @@ module Cup : sig
   val create : min:Vector.t -> max:Vector.t -> t
 end
 
-type t =
-  | Ball
-  | Line
-  | Cup
-  | Box
+module ObjectTypeSelector : sig
+  type t =
+    | Ball
+    | Line
+    | Cup
+    | Box
 
-val equal : t -> t -> bool
+  val equal : t -> t -> bool
+  val to_string : t -> string
+end
 
 module ObjectSelector : sig
   type t =
@@ -79,6 +82,8 @@ module ObjectSelector : sig
     | Line of Line.t
     | Cup of Cup.t
     | Box of Box.t
+
+  val to_string : t -> string
 end
 
 val find_min_max : Vector.t -> Vector.t -> Vector.t * Vector.t

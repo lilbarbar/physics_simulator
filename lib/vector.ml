@@ -73,6 +73,7 @@ let zero () = { x = 0.0; y = 0.0 }
 let translate_x { x; y } dx = { x = x +. dx; y }
 let translate_y { x; y } dy = { x; y = y +. dy }
 let translate_xy { x; y } dx dy = { x = x +. dx; y = y +. dy }
+let to_string { x; y } : string = Printf.sprintf "{ x = %.3f; y = %.3f }" x y
 
 module Plain = struct
   type t =

@@ -133,7 +133,19 @@ let handle_free_state (t : World.t) x y =
     if Objects.box_point_collide box point
     then
       t.click_state
-      <- Click_state.Drag_current_object Objects.ObjectSelector.(Box box))
+      <- Click_state.Drag_current_object Objects.ObjectSelector.(Box box));
+  List.iter t.ui.canvas.lines ~f:(fun line ->
+    let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
+    if Objects.line_point_collide line point
+    then
+      t.click_state
+      <- Click_state.Drag_current_object Objects.ObjectSelector.(Line line));
+  List.iter t.ui.canvas.cups ~f:(fun cup ->
+    let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
+    if Objects.cup_point_collide cup point
+    then
+      t.click_state
+      <- Click_state.Drag_current_object Objects.ObjectSelector.(Cup cup))
 ;;
 
 let rec handle_click (t : World.t) : unit Deferred.t =

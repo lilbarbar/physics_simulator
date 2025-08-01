@@ -42,7 +42,37 @@ let step_drag_object t =
        in
        box.min <- new_min_pos;
        box.max <- new_max_pos
-     | _ -> ())
+     | Line line ->
+       let line_center = Objects.Line.center line in
+       let vector_to_first_endp = Vector.( - ) line.first_endp line_center in
+       let vector_to_second_endp =
+         Vector.( - ) line.second_endp line_center
+       in
+       let new_first_endp =
+         Vector.( + ) current_mouse_pos vector_to_first_endp
+       in
+       let new_second_endp =
+         Vector.( + ) current_mouse_pos vector_to_second_endp
+       in
+       line.first_endp <- new_first_endp;
+       line.second_endp <- new_second_endp
+     | Cup cup ->
+       let cup_width = cup.max.x -. cup.min.x in
+       let cup_height = cup.max.y -. cup.min.y in
+       let new_min_pos =
+         Vector.translate_xy
+           current_mouse_pos
+           (cup_width /. -2.0)
+           (cup_height /. -2.0)
+       in
+       let new_max_pos =
+         Vector.translate_xy
+           current_mouse_pos
+           (cup_width /. 2.0)
+           (cup_height /. 2.0)
+       in
+       cup.min <- new_min_pos;
+       cup.max <- new_max_pos)
   | _ -> ()
 ;;
 

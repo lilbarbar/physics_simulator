@@ -43,20 +43,23 @@ end
 
 module Line : sig
   type t =
-    { first_endp : Vector.t
-    ; second_endp : Vector.t
+    { mutable first_endp : Vector.t
+    ; mutable second_endp : Vector.t
     }
 
   val calc_slope : t -> float
   val length : t -> float
   val length_squared : t -> float
+  val x_length : t -> float
+  val y_length : t -> float
+  val center : t -> Vector.t
   val create : first_endp:Vector.t -> second_endp:Vector.t -> t
 end
 
 module Cup : sig
   type t =
-    { min : Vector.t
-    ; max : Vector.t
+    { mutable min : Vector.t
+    ; mutable max : Vector.t
     }
 
   val create : min:Vector.t -> max:Vector.t -> t
@@ -81,4 +84,5 @@ end
 val find_min_max : Vector.t -> Vector.t -> Vector.t * Vector.t
 val ball_point_collide : Ball.t -> Vector.t -> bool
 val box_point_collide : Box.t -> Vector.t -> bool
+val cup_point_collide : Cup.t -> Vector.t -> bool
 val line_point_collide : Line.t -> Vector.t -> bool

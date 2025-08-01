@@ -16,7 +16,7 @@ let ( - ) { x = x1; y = y1 } { x = x2; y = y2 } : t =
 ;;
 
 let ( * ) { x; y } k : t = { x = k *. x; y = k *. y }
-let ( / ) { x; y } k : t = { x = k /. x; y = k /. y }
+let ( / ) { x; y } k : t = { x = x /. k; y = y /. k }
 
 let multi_sum (vectors : t list) : t =
   List.fold vectors ~init:{ x = 0.0; y = 0.0 } ~f:(fun acc vector ->

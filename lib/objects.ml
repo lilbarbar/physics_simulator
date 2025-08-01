@@ -100,8 +100,8 @@ end
 
 module Line = struct
   type t =
-    { first_endp : Vector.t
-    ; second_endp : Vector.t
+    { mutable first_endp : Vector.t
+    ; mutable second_endp : Vector.t
     }
 
   let calc_slope t =
@@ -112,13 +112,21 @@ module Line = struct
 
   let length t = Vector.dist t.first_endp t.second_endp
   let length_squared t = Vector.dist_squared t.first_endp t.second_endp
+  let x_length t = Float.abs (t.first_endp.x -. t.second_endp.x)
+  let y_length t = Float.abs (t.first_endp.y -. t.second_endp.y)
+
+  let center t =
+    let endp_sum = Vector.( + ) t.first_endp t.second_endp in
+    Vector.( / ) endp_sum 2.0
+  ;;
+
   let create ~first_endp ~second_endp = { first_endp; second_endp }
 end
 
 module Cup = struct
   type t =
-    { min : Vector.t
-    ; max : Vector.t
+    { mutable min : Vector.t
+    ; mutable max : Vector.t
     }
 
   let create ~min ~max = { min; max }
@@ -175,11 +183,18 @@ let box_point_collide (box : Box.t) (point : Vector.t) =
   && Float.( >= ) point.y box.min.y
 ;;
 
+let cup_point_collide (cup : Cup.t) (point : Vector.t) =
+  Float.( <= ) point.x cup.max.x
+  && Float.( >= ) point.x cup.min.x
+  && Float.( <= ) point.y cup.max.y
+  && Float.( >= ) point.y cup.min.y
+;;
+
 let line_point_collide (line : Line.t) (point : Vector.t) =
-  let tolerance = 2.0 in
-  let dist_first_endp = Vector.dist_squared line.first_endp point in
-  let dist_second_endp = Vector.dist_squared line.second_endp point in
-  let line_length = Line.length_squared line in
+  let tolerance = 1.25 in
+  let dist_first_endp = Vector.dist line.first_endp point in
+  let dist_second_endp = Vector.dist line.second_endp point in
+  let line_length = Line.length line in
   let dist_diff =
     Float.abs (dist_first_endp +. dist_second_endp -. line_length)
   in

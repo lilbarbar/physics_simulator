@@ -80,7 +80,7 @@ let handle_select_object_final (t : World.t) obj first_selected_pos x y =
     match obj with
     | ObjectTypeSelector.Ball ->
       let new_ball =
-        Ball.create ~center:first_selected_pos ~mass:10.0 ~radius:dist
+        Ball.create ~center:first_selected_pos ~mass:100.0 ~radius:dist
       in
       Interface.Canvas.add_ball t.ui.canvas new_ball;
       t.click_state <- Click_state.Free_state

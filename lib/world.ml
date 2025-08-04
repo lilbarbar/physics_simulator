@@ -16,13 +16,15 @@ let create () =
   }
 ;;
 
-let step_click_state_display_text t =
+let step_click_state_display_text t dt =
+  ignore dt;
   List.iter t.ui.panel.text_boxes ~f:(fun text_box ->
     if String.equal text_box.id "click_state_text"
     then text_box.display_text <- Click_state.to_string t.click_state)
 ;;
 
-let step_drag_object t =
+let step_drag_object t dt =
+  ignore dt;
   let mouse_x, mouse_y = mouse_pos () in
   let current_mouse_pos =
     { Vector.x = Float.of_int mouse_x; y = Float.of_int mouse_y }
@@ -82,13 +84,25 @@ let step_drag_object t =
   | _ -> ()
 ;;
 
-let step_positions t = 
-    List.iter t.ui.canvas.balls ~f:(fun ball ->
-    Ball.update_vel ball 0.1;
-    Ball.update_pos ball 0.1);
-    ;;
+let step_positions t dt =
+  if Click_state.equal t.click_state Click_state.Free_state
+  then List.iter t.ui.canvas.balls ~f:(fun ball -> Ball.update_pos ball dt)
+;;
 
-let step t =
-  step_drag_object t;
-  step_click_state_display_text t
+let step_velocities t dt =
+  if Click_state.equal t.click_state Click_state.Free_state
+  then List.iter t.ui.canvas.balls ~f:(fun ball -> Ball.update_vel ball dt)
+;;
+
+let step_reactions t dt =
+  ignore dt;
+  Reactions.update_forces t.ui.canvas
+;;
+
+let step t dt =
+  step_drag_object t dt;
+  step_click_state_display_text t dt;
+  step_velocities t dt;
+  step_positions t dt;
+  step_reactions t dt;
 ;;

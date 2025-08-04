@@ -21,6 +21,7 @@ module Ball = struct
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in
     let new_position = Vector.( + ) t.center dx in
+    print_s [%sexp (t.center : Vector.t)];
     t.center <- new_position
   ;;
 
@@ -44,9 +45,7 @@ module Ball = struct
   ;;
 
   let create ~center ~mass ~radius =
-    let gravity_vector : Vector.t =
-      Vector.( * ) { x = 0.0; y = -9.8 } mass
-    in
+    let gravity_vector = Vector.scale { x = 0.0; y = -5000.0 } ~k:mass in
     { center
     ; mass
     ; radius

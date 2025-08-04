@@ -34,6 +34,18 @@ let on_button_click (t : World.t) id =
   | "clear-btn" ->
     Canvas.clear t.ui.canvas;
     t.click_state <- Click_state.Free_state
+  | "play-pause-btn" ->
+    if World_state.equal t.world_state World_state.In_progress
+    then (
+      t.world_state <- World_state.Paused;
+      List.iter t.ui.panel.buttons ~f:(fun button ->
+        if String.equal button.id "play-pause-btn"
+        then button.display_text <- "Pause"))
+    else (
+      t.world_state <- World_state.In_progress;
+      List.iter t.ui.panel.buttons ~f:(fun button ->
+        if String.equal button.id "play-pause-btn"
+        then button.display_text <- "Pause"))
   | _ -> ()
 ;;
 

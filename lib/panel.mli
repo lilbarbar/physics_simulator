@@ -27,7 +27,7 @@ module Button : sig
     ; width : int
     ; position : Vector.Plain.t
     ; id : string
-    ; display_text : string
+    ; mutable display_text : string
     ; mutable color : Graphics.color
     }
 

@@ -19,11 +19,8 @@ let every seconds ~f ~stop =
 let handle_steps (world : World.t) ~world_over =
   let dt = 0.01 in
   every ~stop:world_over dt ~f:(fun () ->
-    World.step world dt;
-    World_graphics.render world.ui;
-    match world.world_state with
-    | Paused | Failure -> world_over := true
-    | In_progress | Clear -> ())
+    Step.step world dt;
+    World_graphics.render world.ui)
 ;;
 
 let run () =

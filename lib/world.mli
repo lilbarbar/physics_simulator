@@ -9,4 +9,3 @@ type t =
   }
 
 val create : unit -> t
-val step : t -> float -> unit

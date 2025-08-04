@@ -15,3 +15,13 @@ let to_string t =
   | Clear -> "clear"
   | Failure -> "failure"
 ;;
+
+let equal (a : t) (b : t) : bool =
+  match a, b with
+  | In_progress, In_progress
+  | Paused, Paused
+  | Clear, Clear
+  | Failure, Failure ->
+    true
+  | _ -> false
+;;

@@ -24,7 +24,7 @@ module Button = struct
     ; width : int
     ; position : Vector.Plain.t
     ; id : string
-    ; display_text : string
+    ; mutable display_text : string
     ; mutable color : Graphics.color
     }
 
@@ -49,72 +49,74 @@ type t =
   }
 
 let create ~height:ui_height ~width =
-  let ui_width = width * 3 in
-  let create_ball_btn_x, create_line_btn_x, create_cup_btn_x =
-    7 * ui_width / 10, 4 * ui_width / 5, 9 * ui_width / 10
-  in
-  let create_ball_line_cup_btn_y = 9 * ui_height / 10 in
-  let create_box_btn_y = create_ball_line_cup_btn_y - 50 in
-  let create_btn_width = ui_width / 15 in
+  let create_btn_width = width * 3 / 15 in
   let create_btn_height = ui_height / 20 in
-  let create_ball_btn =
+  let base_y = 9 * ui_height / 10 in
+  let box_y = base_y - 50 in
+  let create_button ~x ~y ~id ~text ~color =
     Button.create
       ~height:create_btn_height
       ~width:create_btn_width
-      ~position:{ x = create_ball_btn_x; y = create_ball_line_cup_btn_y }
+      ~position:{ x; y }
+      ~id
+      ~display_text:text
+      ~color
+  in
+  let create_ball_btn =
+    create_button
+      ~x:(7 * width * 3 / 10)
+      ~y:base_y
       ~id:"create-ball-btn"
-      ~display_text:"Ball"
+      ~text:"Ball"
       ~color:Graphics.white
   in
   let create_line_btn =
-    Button.create
-      ~height:create_btn_height
-      ~width:create_btn_width
-      ~position:{ x = create_line_btn_x; y = create_ball_line_cup_btn_y }
+    create_button
+      ~x:(4 * width * 3 / 5)
+      ~y:base_y
       ~id:"create-line-btn"
-      ~display_text:"Line"
+      ~text:"Line"
       ~color:Graphics.white
   in
   let create_cup_btn =
-    Button.create
-      ~height:create_btn_height
-      ~width:create_btn_width
-      ~position:{ x = create_cup_btn_x; y = create_ball_line_cup_btn_y }
+    create_button
+      ~x:(9 * width * 3 / 10)
+      ~y:base_y
       ~id:"create-cup-btn"
-      ~display_text:"Cup"
+      ~text:"Cup"
       ~color:Graphics.white
   in
   let create_box_btn =
-    Button.create
-      ~height:create_btn_height
-      ~width:create_btn_width
-      ~position:{ x = create_ball_btn_x; y = create_box_btn_y }
+    create_button
+      ~x:(7 * width * 3 / 10)
+      ~y:box_y
       ~id:"create-box-btn"
-      ~display_text:"Box"
+      ~text:"Box"
       ~color:Graphics.white
   in
-  let clear_btn_width = 8 * width / 10 in
-  let clear_btn_height = create_btn_height in
-  let clear_btn_x = create_ball_btn_x in
-  let clear_btn_y = create_box_btn_y - 50 in
   let clear_btn =
     Button.create
-      ~height:clear_btn_height
-      ~width:clear_btn_width
-      ~position:{ x = clear_btn_x; y = clear_btn_y }
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:{ x = 7 * width * 3 / 10; y = box_y - 50 }
       ~id:"clear-btn"
       ~display_text:"Clear"
       ~color:Graphics.red
   in
-  let click_state_text_x = create_ball_btn_x in
-  let click_state_text_y = clear_btn_y - 50 in
-  let click_state_text_width = clear_btn_width in
-  let click_state_text_height = clear_btn_height in
+  let play_pause_button =
+    Button.create
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:{ x = 7 * width * 3 / 10; y = box_y - 100 }
+      ~id:"play-pause-btn"
+      ~display_text:"Play"
+      ~color:Graphics.white
+  in
   let click_state_text =
     TextBox.create
-      ~height:click_state_text_height
-      ~width:click_state_text_width
-      ~position:{ x = click_state_text_x; y = click_state_text_y }
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:{ x = 7 * width * 3 / 10; y = box_y - 150 }
       ~id:"click_state_text"
       ~display_text:""
   in
@@ -126,6 +128,7 @@ let create ~height:ui_height ~width =
       ; create_cup_btn
       ; create_line_btn
       ; clear_btn
+      ; play_pause_button
       ]
   ; text_boxes = [ click_state_text ]
   }

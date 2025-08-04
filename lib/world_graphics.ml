@@ -43,7 +43,7 @@ let draw_box (box : Box.t) : unit =
   Graphics.fill_rect x1 y1 (x2 - x1) (y2 - y1)
 ;;
 
-let draw_objects (ui : Interface.UI.t) =
+let draw_objects (ui : Interface.t) =
   List.iter ui.canvas.balls ~f:(fun ball -> draw_ball ball);
   List.iter ui.canvas.lines ~f:(fun line -> draw_line line);
   List.iter ui.canvas.cups ~f:(fun cup -> draw_cup cup);
@@ -57,7 +57,7 @@ let draw_text_box ~display_text ~x ~y ~width ~height =
   Graphics.draw_string display_text
 ;;
 
-let draw_text_boxes (ui : Interface.UI.t) =
+let draw_text_boxes (ui : Interface.t) =
   List.iter ui.panel.text_boxes ~f:(fun text_box ->
     draw_text_box
       ~display_text:text_box.display_text
@@ -78,7 +78,7 @@ let draw_button ~display_text ~x ~y ~width ~height ~color =
   Graphics.draw_string display_text
 ;;
 
-let draw_buttons (ui : Interface.UI.t) =
+let draw_buttons (ui : Interface.t) =
   List.iter ui.panel.buttons ~f:(fun button ->
     draw_button
       ~display_text:button.display_text
@@ -89,29 +89,29 @@ let draw_buttons (ui : Interface.UI.t) =
       ~color:button.color)
 ;;
 
-let draw_canvas (ui : Interface.UI.t) =
+let draw_canvas (ui : Interface.t) =
   Graphics.set_color Graphics.black;
   Graphics.fill_rect 0 0 ui.width ui.height;
   draw_objects ui
 ;;
 
-let draw_panel (ui : Interface.UI.t) =
+let draw_panel (ui : Interface.t) =
   Graphics.set_color (Graphics.rgb 128 128 128);
   Graphics.fill_rect ui.canvas.width 0 ui.panel.width ui.panel.height;
   draw_buttons ui;
   draw_text_boxes ui
 ;;
 
-let draw_ui (ui : Interface.UI.t) =
+let draw_ui (ui : Interface.t) =
   Graphics.open_graph " 20000 x 20000 ";
   Graphics.resize_window ui.width ui.height;
   draw_canvas ui;
   draw_panel ui
 ;;
 
-let init_exn (ui : Interface.UI.t) = draw_ui ui
+let init_exn (ui : Interface.t) = draw_ui ui
 
-let render (ui : Interface.UI.t) =
+let render (ui : Interface.t) =
   draw_canvas ui;
   draw_panel ui
 ;;

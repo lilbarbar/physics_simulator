@@ -1,6 +1,5 @@
 open! Core
 open! Collisions
-open! Interface
 open! Objects
 
 let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =

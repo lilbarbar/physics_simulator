@@ -1,5 +1,4 @@
 open! Core
-open! Interface
 open! Objects
 
 val ball_line_force_interaction : Ball.t -> Line.t -> unit

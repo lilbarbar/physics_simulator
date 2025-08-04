@@ -21,12 +21,7 @@ module Ball = struct
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in
     let new_position = Vector.( + ) t.center dx in
-    let new_x = new_position.x in
-    let new_y = new_position.y in
-    let new_new_y = Float.max new_y t.radius in
-    let new_position2 : Vector.t = { x = new_x; y = new_new_y } in
-    print_s [%sexp (t.center : Vector.t)];
-    t.center <- new_position2
+    t.center <- new_position
   ;;
 
   let update_vel t (dt : float) =

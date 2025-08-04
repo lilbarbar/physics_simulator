@@ -5,13 +5,13 @@ open! Graphics
 
 type t =
   { mutable world_state : World_state.t
-  ; mutable ui : Interface.UI.t
+  ; mutable ui : Interface.t
   ; mutable click_state : Click_state.t
   }
 
 let create () =
   { world_state = In_progress
-  ; ui = Interface.UI.create ~height:500 ~width:750
+  ; ui = Interface.create ~height:500 ~width:750
   ; click_state = Click_state.Free_state
   }
 ;;
@@ -21,6 +21,18 @@ let step_click_state_display_text t dt =
   List.iter t.ui.panel.text_boxes ~f:(fun text_box ->
     if String.equal text_box.id "click_state_text"
     then text_box.display_text <- Click_state.to_string t.click_state)
+;;
+
+let drag_box_cup_object current_mouse_pos (min : Vector.t) (max : Vector.t) =
+  let width = max.x -. min.x in
+  let height = max.y -. min.y in
+  let new_min_pos =
+    Vector.translate_xy current_mouse_pos (width /. -2.0) (height /. -2.0)
+  in
+  let new_max_pos =
+    Vector.translate_xy current_mouse_pos (width /. 2.0) (height /. 2.0)
+  in
+  new_min_pos, new_max_pos
 ;;
 
 let step_drag_object t dt =
@@ -34,19 +46,8 @@ let step_drag_object t dt =
     (match obj with
      | Ball ball -> ball.center <- current_mouse_pos
      | Box box ->
-       let box_width = box.max.x -. box.min.x in
-       let box_height = box.max.y -. box.min.y in
-       let new_min_pos =
-         Vector.translate_xy
-           current_mouse_pos
-           (box_width /. -2.0)
-           (box_height /. -2.0)
-       in
-       let new_max_pos =
-         Vector.translate_xy
-           current_mouse_pos
-           (box_width /. 2.0)
-           (box_height /. 2.0)
+       let new_min_pos, new_max_pos =
+         drag_box_cup_object current_mouse_pos box.min box.max
        in
        box.min <- new_min_pos;
        box.max <- new_max_pos
@@ -65,19 +66,8 @@ let step_drag_object t dt =
        line.first_endp <- new_first_endp;
        line.second_endp <- new_second_endp
      | Cup cup ->
-       let cup_width = cup.max.x -. cup.min.x in
-       let cup_height = cup.max.y -. cup.min.y in
-       let new_min_pos =
-         Vector.translate_xy
-           current_mouse_pos
-           (cup_width /. -2.0)
-           (cup_height /. -2.0)
-       in
-       let new_max_pos =
-         Vector.translate_xy
-           current_mouse_pos
-           (cup_width /. 2.0)
-           (cup_height /. 2.0)
+       let new_min_pos, new_max_pos =
+         drag_box_cup_object current_mouse_pos cup.min cup.max
        in
        cup.min <- new_min_pos;
        cup.max <- new_max_pos)
@@ -86,7 +76,8 @@ let step_drag_object t dt =
 
 let step_positions t dt =
   if Click_state.equal t.click_state Click_state.Free_state
-  then List.iter t.ui.canvas.balls ~f:(fun ball -> Ball.update_pos ball dt)
+  then List.iter t.ui.canvas.balls ~f:(fun ball -> Ball.update_pos ball dt);
+  Canvas.bound_objects t.ui.canvas
 ;;
 
 let step_velocities t dt =
@@ -104,5 +95,5 @@ let step t dt =
   step_click_state_display_text t dt;
   step_velocities t dt;
   step_positions t dt;
-  step_reactions t dt;
+  step_reactions t dt
 ;;

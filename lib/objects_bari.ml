@@ -1,5 +1,7 @@
 open! Core
 open! Async
+open! Force
+open! Vector
 
 module Ball = struct
   type t =
@@ -11,21 +13,20 @@ module Ball = struct
     }
   [@@deriving equal, sexp_of]
 
-  let net_force t =
-    List.fold
-      t.forces
-      ~init:{ Vector.x = 0.0; y = 0.0 }
-      ~f:(fun init force -> Vector.( + ) init force.vector)
-  ;;
-
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in
     let new_position = Vector.( + ) t.center dx in
     t.center <- new_position
   ;;
 
+  let net_force t =
+    List.fold t.forces ~init:{ x = 0.0; y = 0.0 } ~f:(fun init force ->
+      Vector.( + ) init force.vector)
+  ;;
+
   let update_vel t (dt : float) =
     let acceleration = Vector.( / ) (net_force t) t.mass in
+    (* print_string (string_of_float acceleration.x); *)
     let dv = Vector.( * ) acceleration dt in
     let new_velocity = Vector.( + ) t.velocity dv in
     t.velocity <- new_velocity
@@ -51,7 +52,7 @@ module Ball = struct
     ; mass
     ; radius
     ; velocity = Vector.zero ()
-    ; forces = [ { vector = gravity_vector; name = "gravity" } ]
+    ; forces = [ { vector = gravity_vector; name = "Gravity" } ]
     }
   ;;
 end
@@ -67,10 +68,8 @@ module Box = struct
     }
 
   let net_force t =
-    List.fold
-      t.forces
-      ~init:{ Vector.x = 0.0; y = 0.0 }
-      ~f:(fun init force -> Vector.( + ) init force.vector)
+    List.fold t.forces ~init:{ x = 0.0; y = 0.0 } ~f:(fun init force ->
+      Vector.( + ) init force.vector)
   ;;
 
   let update_pos t (dt : float) =
@@ -116,8 +115,8 @@ end
 
 module Line = struct
   type t =
-    { mutable first_endp : Vector.t
-    ; mutable second_endp : Vector.t
+    { first_endp : Vector.t
+    ; second_endp : Vector.t
     }
 
   let calc_slope t =
@@ -126,77 +125,20 @@ module Line = struct
     ydiff /. xdiff
   ;;
 
-  let length t = Vector.dist t.first_endp t.second_endp
-  let length_squared t = Vector.dist_squared t.first_endp t.second_endp
-  let x_length t = Float.abs (t.first_endp.x -. t.second_endp.x)
-  let y_length t = Float.abs (t.first_endp.y -. t.second_endp.y)
-
-  let center t =
-    let endp_sum = Vector.( + ) t.first_endp t.second_endp in
-    Vector.( / ) endp_sum 2.0
-  ;;
-
   let create ~first_endp ~second_endp = { first_endp; second_endp }
 end
 
 module Cup = struct
   type t =
-    { mutable min : Vector.t
-    ; mutable max : Vector.t
+    { min : Vector.t
+    ; max : Vector.t
     }
 
   let create ~min ~max = { min; max }
 end
 
-module ObjectTypeSelector = struct
-  type t =
-    | Ball
-    | Line
-    | Cup
-    | Box
-
-  let to_string = function
-    | Ball -> "Ball"
-    | Line -> "Line"
-    | Cup -> "Cup"
-    | Box -> "Box"
-  ;;
-
-  let equal (a : t) (b : t) : bool =
-    match a, b with
-    | Ball, Ball | Line, Line | Cup, Cup | Box, Box -> true
-    | _, _ -> false
-  ;;
-end
-
-module ObjectSelector = struct
-  type t =
-    | Ball of Ball.t
-    | Line of Line.t
-    | Cup of Cup.t
-    | Box of Box.t
-
-  let to_string = function
-    | Ball _ -> "Ball"
-    | Line _ -> "Line"
-    | Cup _ -> "Cup"
-    | Box _ -> "Box"
-  ;;
-end
-
-let find_min_max
-      (first_selected_pos : Vector.t)
-      (second_selected_pos : Vector.t)
-  =
-  let x1 = first_selected_pos.x in
-  let x2 = second_selected_pos.x in
-  let y1 = first_selected_pos.y in
-  let y2 = second_selected_pos.y in
-  let smaller_x = Float.min x1 x2 in
-  let larger_x = Float.max x1 x2 in
-  let smaller_y = Float.min y1 y2 in
-  let larger_y = Float.max y1 y2 in
-  let max_pos = { Vector.x = larger_x; Vector.y = larger_y } in
-  let min_pos = { Vector.x = smaller_x; Vector.y = smaller_y } in
-  min_pos, max_pos
-;;
+type t =
+  | Ball
+  | Line
+  | Cup
+  | Box

@@ -82,6 +82,12 @@ let step_drag_object t =
   | _ -> ()
 ;;
 
+let step_positions t = 
+    List.iter t.ui.canvas.balls ~f:(fun ball ->
+    Ball.update_vel ball 0.1;
+    Ball.update_pos ball 0.1);
+    ;;
+
 let step t =
   step_drag_object t;
   step_click_state_display_text t

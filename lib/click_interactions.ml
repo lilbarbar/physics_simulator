@@ -123,25 +123,25 @@ let handle_free_state (t : World.t) x y =
     if Interface.Button.in_bounds button x y then on_button_click t button.id);
   List.iter t.ui.canvas.balls ~f:(fun ball ->
     let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
-    if ball_point_collide ball point
+    if Collisions.ball_point_collide ball point
     then
       t.click_state
       <- Click_state.Drag_current_object ObjectSelector.(Ball ball));
   List.iter t.ui.canvas.boxes ~f:(fun box ->
     let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
-    if box_point_collide box point
+    if Collisions.box_point_collide box point
     then
       t.click_state
       <- Click_state.Drag_current_object ObjectSelector.(Box box));
   List.iter t.ui.canvas.lines ~f:(fun line ->
     let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
-    if line_point_collide line point
+    if Collisions.line_point_collide line point
     then
       t.click_state
       <- Click_state.Drag_current_object ObjectSelector.(Line line));
   List.iter t.ui.canvas.cups ~f:(fun cup ->
     let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
-    if cup_point_collide cup point
+    if Collisions.cup_point_collide cup point
     then
       t.click_state
       <- Click_state.Drag_current_object ObjectSelector.(Cup cup))

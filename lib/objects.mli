@@ -50,6 +50,7 @@ module Line : sig
     { mutable first_endp : Vector.t
     ; mutable second_endp : Vector.t
     }
+  [@@deriving equal, sexp_of]
 
   val calc_slope : t -> float
   val length : t -> float

@@ -45,12 +45,12 @@ module Ball = struct
   ;;
 
   let create ~center ~mass ~radius =
-    let gravity_vector = Vector.scale { x = 0.0; y = -5000.0 } ~k:mass in
+    let gravity_vector = Vector.scale { x = 0.0; y = -980.0 } ~k:mass in
     { center
     ; mass
     ; radius
     ; velocity = Vector.zero ()
-    ; forces = [ { vector = gravity_vector; name = "gravity" } ]
+    ; forces = [ { vector = gravity_vector; name = "Gravity" } ]
     }
   ;;
 end
@@ -118,6 +118,7 @@ module Line = struct
     { mutable first_endp : Vector.t
     ; mutable second_endp : Vector.t
     }
+  [@@deriving equal, sexp_of]
 
   let calc_slope t =
     let ydiff = t.second_endp.y -. t.first_endp.y in

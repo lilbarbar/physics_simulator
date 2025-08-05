@@ -100,9 +100,9 @@ let step_reactions t dt =
 ;;
 
 let step t dt =
+  step_reactions t dt;
   step_drag_object t dt;
   step_click_state_display_text t dt;
   step_velocities t dt;
-  step_positions t dt;
-  step_reactions t dt;
+  step_positions t dt
 ;;

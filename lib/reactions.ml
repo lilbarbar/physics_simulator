@@ -2,52 +2,81 @@ open! Core
 open! Collisions
 open! Interface
 open! Objects
+open! Vector
+
+(* let vector_components (vector : Vector.t) (sin_theta : Float.t) : (Vector.t * Vector.t )= *)
+
+let generate_normal_force_helper (ball : Ball.t) (line : Line.t) =
+  let line_vector =
+    match Float.( >= ) line.second_endp.y line.first_endp.y with
+    | false -> Vector.( - ) line.second_endp line.first_endp
+    | true -> Vector.( - ) line.first_endp line.second_endp
+  in
+  let sin_theta = line_vector.y /. Vector.mag line_vector in
+  let new_force_vector =
+    Vector.( * )
+      (Vector.normalize line_vector)
+      (Float.abs (980.0 *. ball.mass *. sin_theta))
+  in
+  let new_force : Force.t =
+    { vector = new_force_vector; name = "Normal Force" }
+  in
+  new_force
+;;
 
 let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
+  let new_force : Force.t = generate_normal_force_helper ball line in
   if ball_and_line ball line
   then (
+    (* print_s [%sexp (line : Line.t)]; *)
     match
-      List.find ball.forces ~f:(fun force ->
-        String.equal force.name "Normal Force")
+      List.find ball.forces ~f:(fun force -> Force.equal new_force force)
     with
     | Some _ -> ()
     | None ->
-      let line_vector = Vector.( - ) line.second_endp line.first_endp in
-      let sin_theta = line_vector.y /. Vector.mag line_vector in
-      let cos_theta = line_vector.x /. Vector.mag line_vector in
-      let gravity_of_ball =
-        Option.value_exn
-          (List.find ball.forces ~f:(fun force ->
-             String.equal force.name "Gravity"))
-      in
-      let normal_force_magnitude =
-        Float.abs (Vector.mag gravity_of_ball.vector *. cos_theta)
-      in
-      let normal_force_x = normal_force_magnitude *. sin_theta in
-      let normal_force_y = normal_force_magnitude *. cos_theta in
-      let normal_force_vector : Vector.t =
-        { x = normal_force_x; y = normal_force_y }
-      in
-      let normal_force : Force.t =
-        { vector = normal_force_vector; name = "Normal Force" }
-      in
-      Ball.add_force ball normal_force)
+      Ball.remove_force
+        ball
+        { vector = Vector.scale { x = 0.0; y = -980.0 } ~k:ball.mass
+        ; name = "Gravity"
+        };
+      (match
+         List.find ball.forces ~f:(fun force ->
+           String.equal force.name "String")
+       with
+       | Some force ->
+         (* *)
+         if
+           Float.( >= )
+             (force.vector.y /. force.vector.x *. Line.calc_slope line)
+             0.0
+         then ()
+         else ball.forces <- [];
+         ball.velocity <- { x = 0.0; y = 0.0 }
+       | None ->
+         Ball.add_force ball new_force;
+         Ball.set_vel ball { x = 0.0; y = 0.0 }))
   else (
     match
-      List.find ball.forces ~f:(fun force ->
-        String.equal force.name "Normal Force")
+      List.find ball.forces ~f:(fun force -> Force.equal force new_force)
     with
-    | Some force -> Ball.remove_force ball force
+    | Some force ->
+      Ball.remove_force ball force;
+      let gravity_vector =
+        Vector.scale { x = 0.0; y = -980.0 } ~k:ball.mass
+      in
+      if List.is_empty ball.forces
+      then Ball.add_force ball { vector = gravity_vector; name = "Gravity" }
     | None -> ())
 ;;
 
 let ball_cup_force_interaction (ball : Ball.t) (cup : Cup.t) =
   if ball_in_cup ball cup
-  then
+  then (
+    print_string "ball in cup";
     ball.center
     <- { x = (cup.min.x +. cup.max.x) /. 2.0; y = cup.min.y +. ball.radius };
-  ball.velocity <- { x = 0.0; y = 0.0 };
-  ball.forces <- []
+    ball.velocity <- { x = 0.0; y = 0.0 };
+    ball.forces <- [])
 ;;
 
 let all_ball_and_line_forces (canvas : Canvas.t) =

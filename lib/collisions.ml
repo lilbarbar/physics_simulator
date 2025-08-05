@@ -36,10 +36,9 @@ let line_point_collide (line : Line.t) (point : Vector.t) =
 ;;
 
 let ball_and_ball (ball1 : Ball.t) (ball2 : Ball.t) : bool =
-  Float.compare
+  Float.( <= )
     (Vector.mag (Vector.( - ) ball1.center ball2.center))
     (ball1.radius +. ball2.radius)
-  <= 0
 ;;
 
 let ball_and_ball_collision_point (ball1 : Ball.t) (ball2 : Ball.t)
@@ -58,7 +57,21 @@ let ball_and_line (ball : Ball.t) (line : Line.t) : bool =
        /. Vector.dot_product vector_B vector_B)
   in
   let ortho_to_projection = Vector.( - ) vector_A projection in
-  Float.compare (Vector.mag ortho_to_projection) ball.radius <= 0
+  let min_x, max_x =
+    match Float.( <= ) line.second_endp.x line.first_endp.x with
+    | true -> line.second_endp.x, line.first_endp.x
+    | false -> line.first_endp.x, line.second_endp.x
+  in
+  let min_y, max_y =
+    match Float.( <= ) line.second_endp.y line.first_endp.y with
+    | true -> line.second_endp.y, line.first_endp.y
+    | false -> line.first_endp.y, line.second_endp.y
+  in
+  Float.( <= ) (Vector.mag ortho_to_projection) ball.radius
+  && Float.( >= ) ball.center.x min_x
+  && Float.( <= ) ball.center.x max_x
+  && Float.( >= ) ball.center.y min_y
+  && Float.( <= ) ball.center.y max_y
 ;;
 
 let ball_and_line_collision_point (ball : Ball.t) (line : Line.t) : Vector.t =
@@ -74,10 +87,13 @@ let ball_and_line_collision_point (ball : Ball.t) (line : Line.t) : Vector.t =
 ;;
 
 let ball_in_cup (ball : Ball.t) (cup : Cup.t) : bool =
-  Float.compare ball.center.x (cup.min.x +. ball.radius) > 0
-  && Float.compare ball.center.x (cup.max.x -. ball.radius) < 0
-  && Float.compare ball.center.y (cup.min.y +. ball.radius) > 0
-  && Float.compare ball.center.y (cup.max.y -. ball.radius) < 0
+  print_s [%sexp (ball.center : Vector.t)];
+  print_s [%sexp (cup.min : Vector.t)];
+  print_s [%sexp (cup.max : Vector.t)];
+  Float.compare ball.center.x (cup.min.x +. ball.radius) >= 0
+  && Float.compare ball.center.x (cup.max.x -. ball.radius) <= 0
+  && Float.compare ball.center.y (cup.min.y +. ball.radius) >= 0
+  && Float.compare ball.center.y (cup.max.y -. ball.radius) <= 0
 ;;
 
 let ball_and_line_collision_point (ball : Ball.t) (line : Line.t) : Vector.t =

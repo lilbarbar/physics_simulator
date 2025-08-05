@@ -40,7 +40,7 @@ let on_button_click (t : World.t) id =
       t.world_state <- World_state.Paused;
       List.iter t.ui.panel.buttons ~f:(fun button ->
         if String.equal button.id "play-pause-btn"
-        then button.display_text <- "Pause"))
+        then button.display_text <- "Play"))
     else (
       t.world_state <- World_state.In_progress;
       List.iter t.ui.panel.buttons ~f:(fun button ->

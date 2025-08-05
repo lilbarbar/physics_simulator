@@ -24,6 +24,23 @@ let generate_normal_force_helper (ball : Ball.t) (line : Line.t) =
   new_force
 ;;
 
+let generate_initial_line_velocity (ball : Ball.t) (line : Line.t) =
+  let line_vector =
+    match Float.( >= ) line.second_endp.y line.first_endp.y with
+    | false -> Vector.( - ) line.second_endp line.first_endp
+    | true -> Vector.( - ) line.first_endp line.second_endp
+  in
+  let unit_line_vector = Vector.normalize line_vector in
+  let sin_theta = unit_line_vector.x in
+  let magnitude_of_horiz_comp =
+    Vector.mag ball.velocity *. Float.abs sin_theta
+  in
+  print_s
+    [%sexp
+      (Vector.( * ) unit_line_vector magnitude_of_horiz_comp : Vector.t)];
+  Vector.( * ) unit_line_vector magnitude_of_horiz_comp
+;;
+
 let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
   let new_force : Force.t = generate_normal_force_helper ball line in
   if ball_and_line ball line
@@ -45,7 +62,7 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
        with
        | None ->
          Ball.add_force ball new_force;
-         Ball.set_vel ball { x = 0.0; y = 0.0 }
+         Ball.set_vel ball (generate_initial_line_velocity ball line)
        | Some force ->
          (* *)
          if

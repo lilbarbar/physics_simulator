@@ -43,13 +43,29 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
          List.find ball.forces ~f:(fun force ->
            String.equal force.name "Normal Force")
        with
+       | None ->
+         Ball.add_force ball new_force;
+         Ball.set_vel ball { x = 0.0; y = 0.0 }
        | Some force ->
          (* *)
          if
            Float.( >= )
              (force.vector.y /. force.vector.x *. Line.calc_slope line)
              0.0
-         then ()
+         then (
+           match
+             Float.( <= )
+               (Float.abs (force.vector.y /. force.vector.x))
+               (Float.abs (new_force.vector.y /. new_force.vector.x))
+           with
+           | true ->
+             ball.forces <- [];
+             ball.velocity <- { x = 0.0; y = 0.0 };
+             Ball.add_force ball force
+           | false ->
+             ball.forces <- [];
+             ball.velocity <- { x = 0.0; y = 0.0 };
+             Ball.add_force ball new_force)
          else (
            Ball.add_force ball new_force;
            let overall_net_force : Vector.t = Ball.net_force ball in
@@ -60,10 +76,7 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
            in
            Ball.add_force ball counter_force;
            print_s [%sexp (Ball.net_force ball : Vector.t)];
-           ball.velocity <- { x = 0.0; y = 0.0 })
-       | None ->
-         Ball.add_force ball new_force;
-         Ball.set_vel ball { x = 0.0; y = 0.0 }))
+           ball.velocity <- { x = 0.0; y = 0.0 })))
   else (
     match
       List.find ball.forces ~f:(fun force -> Force.equal force new_force)

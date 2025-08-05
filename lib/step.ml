@@ -61,14 +61,12 @@ let step_drag_object (t : World.t) dt =
 ;;
 
 let step_positions (t : World.t) dt =
-  if Click_state.equal t.click_state Click_state.Free_state
-  then List.iter t.ui.canvas.balls ~f:(fun ball -> Ball.update_pos ball dt);
+  List.iter t.ui.canvas.balls ~f:(fun ball -> Ball.update_pos ball dt);
   Canvas.bound_objects t.ui.canvas
 ;;
 
 let step_velocities (t : World.t) dt =
-  if Click_state.equal t.click_state Click_state.Free_state
-  then List.iter t.ui.canvas.balls ~f:(fun ball -> Ball.update_vel ball dt)
+  List.iter t.ui.canvas.balls ~f:(fun ball -> Ball.update_vel ball dt)
 ;;
 
 let step_reactions (t : World.t) dt =

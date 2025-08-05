@@ -27,7 +27,6 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
   let new_force : Force.t = generate_normal_force_helper ball line in
   if ball_and_line ball line
   then (
-    (* print_s [%sexp (line : Line.t)]; *)
     match
       List.find ball.forces ~f:(fun force -> Force.equal new_force force)
     with
@@ -43,7 +42,6 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
            String.equal force.name "String")
        with
        | Some force ->
-         (* *)
          if
            Float.( >= )
              (force.vector.y /. force.vector.x *. Line.calc_slope line)

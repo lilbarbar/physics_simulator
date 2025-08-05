@@ -1,5 +1,6 @@
 open! Core
 open! Async
+open! Gravity
 
 module Ball = struct
   type t =
@@ -53,7 +54,9 @@ module Ball = struct
   ;;
 
   let create ~center ~mass ~radius =
-    let gravity_vector = Vector.scale { x = 0.0; y = -980.0 } ~k:mass in
+    let gravity_vector =
+      Vector.scale { x = 0.0; y = gravity_acceleration () } ~k:mass
+    in
     { center
     ; mass
     ; radius

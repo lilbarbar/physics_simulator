@@ -3,6 +3,7 @@ open! Collisions
 open! Interface
 open! Objects
 open! Vector
+open! Gravity
 
 (* let vector_components (vector : Vector.t) (sin_theta : Float.t) : (Vector.t * Vector.t )= *)
 
@@ -16,7 +17,7 @@ let generate_normal_force_helper (ball : Ball.t) (line : Line.t) =
   let new_force_vector =
     Vector.( * )
       (Vector.normalize line_vector)
-      (Float.abs (980.0 *. ball.mass *. sin_theta))
+      (Float.abs (gravity_acceleration () *. ball.mass *. sin_theta))
   in
   let new_force : Force.t =
     { vector = new_force_vector; name = "Normal Force" }
@@ -53,7 +54,10 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
     | None ->
       Ball.remove_force
         ball
-        { vector = Vector.scale { x = 0.0; y = -980.0 } ~k:ball.mass
+        { vector =
+            Vector.scale
+              { x = 0.0; y = gravity_acceleration () }
+              ~k:ball.mass
         ; name = "Gravity"
         };
       (match
@@ -101,7 +105,7 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
     | Some force ->
       Ball.remove_force ball force;
       let gravity_vector =
-        Vector.scale { x = 0.0; y = -980.0 } ~k:ball.mass
+        Vector.scale { x = 0.0; y = gravity_acceleration () } ~k:ball.mass
       in
       if List.is_empty ball.forces
       then Ball.add_force ball { vector = gravity_vector; name = "Gravity" }

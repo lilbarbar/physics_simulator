@@ -75,7 +75,9 @@ let step_reactions (t : World.t) dt =
 ;;
 
 let step (t : World.t) dt =
-  if World_state.equal t.world_state World_state.In_progress
+  if
+    World_state.equal t.world_state World_state.In_progress
+    && Click_state.equal t.click_state Click_state.Free_state
   then (
     step_velocities t dt;
     step_positions t dt;

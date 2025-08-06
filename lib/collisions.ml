@@ -36,7 +36,7 @@ let line_point_collide (line : Line.t) (point : Vector.t) =
 ;;
 
 let ball_and_ball (ball1 : Ball.t) (ball2 : Ball.t) : bool =
-  Float.( <= )
+  Float.( < )
     (Vector.mag (Vector.( - ) ball1.center ball2.center))
     (ball1.radius +. ball2.radius)
 ;;

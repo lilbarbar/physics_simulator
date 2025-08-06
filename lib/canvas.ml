@@ -29,6 +29,17 @@ let bound_objects t =
         (Float.max ball.center.y radius)
         (Float.of_int t.height -. radius)
     in
+    let velocity_y =
+      if Float.equal clamped_y radius then 0.0 else ball.velocity.y
+    in
+    let velocity_x =
+      if
+        Float.equal clamped_x radius
+        || Float.equal clamped_x (Float.of_int t.width -. radius)
+      then 0.0
+      else ball.velocity.x
+    in
+    ball.velocity <- { Vector.x = velocity_x; y = velocity_y };
     ball.center <- { x = clamped_x; y = clamped_y })
 ;;
 

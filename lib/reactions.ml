@@ -23,6 +23,70 @@ let generate_normal_force_helper (ball : Ball.t) (line : Line.t) =
   new_force
 ;;
 
+let resolve_ball_ball_collision (ball1 : Ball.t) (ball2 : Ball.t) =
+  print_endline "resolve_ball_ball_collision";
+  let coeff_of_restitution = 0.1 in
+  let ball1_center = ball1.center in
+  let ball2_center = ball2.center in
+  let ball1_vel = ball1.velocity in
+  let ball2_vel = ball2.velocity in
+  let ball1_mass = ball1.mass in
+  let ball2_mass = ball2.mass in
+  let vector_from_ball2_ball1 = Vector.( - ) ball1_center ball2_center in
+  let vector_from_ball2_ball1_norm =
+    Vector.normalize vector_from_ball2_ball1
+  in
+  let ball1_vel_dot_prod =
+    Vector.dot_product vector_from_ball2_ball1_norm ball1_vel
+  in
+  let ball1_vel_norm_comp =
+    Vector.( * ) vector_from_ball2_ball1_norm ball1_vel_dot_prod
+  in
+  let ball1_vel_tang_comp = Vector.( - ) ball1_vel ball1_vel_norm_comp in
+  let ball2_vel_dot_prod =
+    Vector.dot_product vector_from_ball2_ball1_norm ball2_vel
+  in
+  let ball2_vel_norm_comp =
+    Vector.scale vector_from_ball2_ball1_norm ~k:ball2_vel_dot_prod
+  in
+  let ball2_vel_tang_comp = Vector.( - ) ball2_vel ball2_vel_norm_comp in
+  let new_ball1_vel_norm =
+    ((ball1_vel_dot_prod
+      *. (ball1_mass -. (coeff_of_restitution *. ball2_mass)))
+     +. ((1.0 +. coeff_of_restitution) *. ball2_mass *. ball2_vel_dot_prod))
+    /. (ball1_mass +. ball2_mass)
+  in
+  let new_ball1_vel_norm_vector =
+    Vector.( * ) vector_from_ball2_ball1_norm new_ball1_vel_norm
+  in
+  let new_ball2_vel_norm =
+    ((ball2_vel_dot_prod
+      *. (ball2_mass -. (coeff_of_restitution *. ball1_mass)))
+     +. ((1.0 +. coeff_of_restitution) *. ball1_mass *. ball1_vel_dot_prod))
+    /. (ball1_mass +. ball2_mass)
+  in
+  let new_ball2_vel_norm_vector =
+    Vector.( * ) vector_from_ball2_ball1_norm new_ball2_vel_norm
+  in
+  let new_ball1_vel =
+    Vector.( + ) new_ball1_vel_norm_vector ball1_vel_tang_comp
+  in
+  let new_ball2_vel =
+    Vector.( + ) new_ball2_vel_norm_vector ball2_vel_tang_comp
+  in
+  ball1.velocity <- new_ball1_vel;
+  ball2.velocity <- new_ball2_vel;
+  let overlap_dist = Vector.mag vector_from_ball2_ball1 in
+  let total_mass = ball1_mass +. ball2_mass in
+  let correction_vector =
+    Vector.scale vector_from_ball2_ball1_norm ~k:(overlap_dist /. total_mass)
+  in
+  ball1.center
+  <- Vector.( + ) ball1.center (Vector.( * ) correction_vector ball2_mass);
+  ball2.center
+  <- Vector.( - ) ball2.center (Vector.( * ) correction_vector ball1_mass)
+;;
+
 let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
   let new_force : Force.t = generate_normal_force_helper ball line in
   if ball_and_line ball line
@@ -100,7 +164,16 @@ let all_ball_and_cup_forces (canvas : Canvas.t) =
     List.iter all_cups ~f:(fun cup -> ball_cup_force_interaction ball cup))
 ;;
 
+let handle_ball_ball_interactions (canvas : Canvas.t) =
+  List.iteri canvas.balls ~f:(fun i ball1 ->
+    let rest = List.drop canvas.balls Int.(i + 1) in
+    List.iter rest ~f:(fun ball2 ->
+      if Collisions.ball_and_ball ball1 ball2
+      then resolve_ball_ball_collision ball1 ball2))
+;;
+
 let update_forces (canvas : Canvas.t) =
-  all_ball_and_line_forces canvas;
-  all_ball_and_cup_forces canvas
+  (* all_ball_and_line_forces canvas; *)
+  (* all_ball_and_cup_forces canvas *)
+  handle_ball_ball_interactions canvas
 ;;

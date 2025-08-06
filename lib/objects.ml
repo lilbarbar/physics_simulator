@@ -21,6 +21,7 @@ module Ball = struct
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in
     let new_position = Vector.( + ) t.center dx in
+    
     t.center <- new_position
   ;;
 

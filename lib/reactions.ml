@@ -125,6 +125,13 @@ let ball_cup_force_interaction (ball : Ball.t) (cup : Cup.t) =
     <- { x = (cup.min.x +. cup.max.x) /. 2.0; y = cup.min.y +. ball.radius };
     ball.velocity <- { x = 0.0; y = 0.0 };
     ball.forces <- [])
+  else if List.is_empty ball.forces
+  then (
+    let gravity_vector =
+      { x = 0.0; y = gravity_acceleration () *. ball.mass }
+    in
+    Ball.add_force ball { vector = gravity_vector; name = "Gravity" })
+  else ()
 ;;
 
 let all_ball_and_line_forces (canvas : Canvas.t) =

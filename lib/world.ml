@@ -11,7 +11,7 @@ type t =
 
 let create () =
   { world_state = World_state.Paused
-  ; ui = Interface.create ~height:500 ~width:750
+  ; ui = Interface.create ~height:Constants.ui_height ~width:Constants.ui_width
   ; click_state = Click_state.Free_state
   }
 ;;

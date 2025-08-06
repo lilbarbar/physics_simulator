@@ -25,7 +25,7 @@ let generate_normal_force_helper (ball : Ball.t) (line : Line.t) =
 
 let resolve_ball_ball_collision (ball1 : Ball.t) (ball2 : Ball.t) =
   print_endline "resolve_ball_ball_collision";
-  let coeff_of_restitution = 0.1 in
+  let coeff_of_restitution = 1.0 in
   let ball1_center = ball1.center in
   let ball2_center = ball2.center in
   let ball1_vel = ball1.velocity in
@@ -92,7 +92,8 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
   if ball_and_line ball line
   then (
     match
-      List.find ball.forces ~f:(fun force -> Force.equal new_force force)
+      List.find ball.forces ~f:(fun force ->
+        Force.equal new_force force && String.equal force.name "Normal Force")
     with
     | Some _ -> ()
     | None ->

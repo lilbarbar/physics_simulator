@@ -79,9 +79,9 @@ let step (t : World.t) dt =
     World_state.equal t.world_state World_state.In_progress
     && Click_state.equal t.click_state Click_state.Free_state
   then (
+    step_reactions t dt;
     step_velocities t dt;
-    step_positions t dt;
-    step_reactions t dt);
+    step_positions t dt);
   step_drag_object t dt;
   step_click_state_display_text t dt
 ;;

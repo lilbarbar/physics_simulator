@@ -12,16 +12,13 @@ module Ball = struct
   [@@deriving equal, sexp_of]
 
   let net_force t =
-    List.fold
-      t.forces
-      ~init:{ Vector.x = 0.0; y = 0.0 }
-      ~f:(fun init force -> Vector.( + ) init force.vector)
+    List.fold t.forces ~init:(Vector.zero ()) ~f:(fun init force ->
+      Vector.( + ) init force.vector)
   ;;
 
   let update_pos t (dt : float) =
     let dx = Vector.( * ) t.velocity dt in
     let new_position = Vector.( + ) t.center dx in
-    
     t.center <- new_position
   ;;
 
@@ -44,13 +41,15 @@ module Ball = struct
          not (Force.equal force other_force))
   ;;
 
-  let create ~center ~mass ~radius =
-    let gravity_vector = Vector.scale { x = 0.0; y = -980.0 } ~k:mass in
+  let create ~center ~radius =
+    let area = Float.pi *. radius *. radius in
+    let mass = area *. Constants.surface_density in
+    let gravity = Vector.scale { x = 0.0; y = Constants.g } ~k:mass in
     { center
     ; mass
     ; radius
     ; velocity = Vector.zero ()
-    ; forces = [ { vector = gravity_vector; name = "Gravity" } ]
+    ; forces = [ { vector = gravity; name = "gravity" } ]
     }
   ;;
 end
@@ -66,10 +65,8 @@ module Box = struct
     }
 
   let net_force t =
-    List.fold
-      t.forces
-      ~init:{ Vector.x = 0.0; y = 0.0 }
-      ~f:(fun init force -> Vector.( + ) init force.vector)
+    List.fold t.forces ~init:(Vector.zero ()) ~f:(fun init force ->
+      Vector.( + ) init force.vector)
   ;;
 
   let update_pos t (dt : float) =
@@ -108,7 +105,9 @@ module Box = struct
          not (Force.equal force other_force))
   ;;
 
-  let create ~min ~max ~mass =
+  let create ~(min : Vector.t) ~(max : Vector.t) =
+    let area = (max.x -. min.x) *. (max.y -. min.y) in
+    let mass = area *. Constants.surface_density in
     { min; max; mass; theta = 0.0; velocity = Vector.zero (); forces = [] }
   ;;
 end

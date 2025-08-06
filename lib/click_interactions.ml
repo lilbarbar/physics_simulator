@@ -75,17 +75,13 @@ let handle_select_object_final (t : World.t) obj first_selected_pos x y =
   then (
     (match obj with
      | ObjectTypeSelector.Ball ->
-       let new_ball =
-         Ball.create ~center:first_selected_pos ~mass:100.0 ~radius:dist
-       in
+       let new_ball = Ball.create ~center:first_selected_pos ~radius:dist in
        Canvas.add_ball t.ui.canvas new_ball
      | ObjectTypeSelector.Cup ->
        let new_cup = Objects.Cup.create ~min:min_pos ~max:max_pos in
        Canvas.add_cup t.ui.canvas new_cup
      | ObjectTypeSelector.Box ->
-       let new_box =
-         Objects.Box.create ~min:min_pos ~max:max_pos ~mass:10.0
-       in
+       let new_box = Objects.Box.create ~min:min_pos ~max:max_pos in
        Canvas.add_box t.ui.canvas new_box
      | ObjectTypeSelector.Line ->
        let new_line =

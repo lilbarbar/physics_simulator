@@ -20,7 +20,7 @@ module Ball : sig
   val add_pos : t -> Vector.t -> unit
   val add_force : t -> Force.t -> unit
   val remove_force : t -> Force.t -> unit
-  val create : center:Vector.t -> mass:float -> radius:float -> t
+  val create : center:Vector.t -> radius:float -> t
 end
 
 module Box : sig
@@ -42,7 +42,7 @@ module Box : sig
   val add_pos : t -> Vector.t -> unit
   val add_force : t -> Force.t -> unit
   val remove_force : t -> Force.t -> unit
-  val create : min:Vector.t -> max:Vector.t -> mass:float -> t
+  val create : min:Vector.t -> max:Vector.t -> t
 end
 
 module Line : sig

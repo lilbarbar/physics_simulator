@@ -32,7 +32,9 @@ let step_drag_object t dt =
   match t.click_state with
   | Click_state.Drag_current_object obj ->
     (match obj with
-     | Ball ball -> ball.center <- current_mouse_pos
+     | Ball ball ->
+       ball.center <- current_mouse_pos;
+       ball.velocity <- { x = 0.0; y = 0.0 }
      | Box box ->
        let box_width = box.max.x -. box.min.x in
        let box_height = box.max.y -. box.min.y in

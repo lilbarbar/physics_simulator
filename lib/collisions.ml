@@ -4,7 +4,7 @@ open! Objects
 open! Vector
 
 let ball_point_collide (ball : Ball.t) (point : Vector.t) =
-  print_endline "ball_point_collide";
+  (* print_endline "ball_point_collide"; *)
   let ball_point_dist_squared = Vector.dist_squared ball.center point in
   let radius_squared = ball.radius *. ball.radius in
   Float.( <= ) ball_point_dist_squared radius_squared
@@ -87,9 +87,9 @@ let ball_and_line_collision_point (ball : Ball.t) (line : Line.t) : Vector.t =
 ;;
 
 let ball_in_cup (ball : Ball.t) (cup : Cup.t) : bool =
-  print_s [%sexp (ball.center : Vector.t)];
-  print_s [%sexp (cup.min : Vector.t)];
-  print_s [%sexp (cup.max : Vector.t)];
+  (* print_s [%sexp (ball.center : Vector.t)];
+     print_s [%sexp (cup.min : Vector.t)];
+     print_s [%sexp (cup.max : Vector.t)]; *)
   Float.compare ball.center.x (cup.min.x +. ball.radius) >= 0
   && Float.compare ball.center.x (cup.max.x -. ball.radius) <= 0
   && Float.compare ball.center.y (cup.min.y +. ball.radius) >= 0

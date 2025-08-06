@@ -36,9 +36,8 @@ let generate_initial_line_velocity (ball : Ball.t) (line : Line.t) =
   let magnitude_of_horiz_comp =
     Vector.mag ball.velocity *. Float.abs sin_theta
   in
-  print_s
-    [%sexp
-      (Vector.( * ) unit_line_vector magnitude_of_horiz_comp : Vector.t)];
+  (* print_s
+     [%sexp (Vector.( * ) unit_line_vector magnitude_of_horiz_comp : Vector.t)]; *)
   Vector.( * ) unit_line_vector magnitude_of_horiz_comp
 ;;
 
@@ -92,13 +91,19 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
            let overall_net_force : Vector.t = Ball.net_force ball in
            let counter_force : Force.t =
              { vector = Vector.( * ) overall_net_force (-1.0)
-             ; name = "counter"
+             ; name = "Counter"
              }
            in
            Ball.add_force ball counter_force;
-           print_s [%sexp (Ball.net_force ball : Vector.t)];
+           (* print_s [%sexp (Ball.net_force ball : Vector.t)]; *)
            ball.velocity <- { x = 0.0; y = 0.0 })))
   else (
+    (match
+       List.find ball.forces ~f:(fun force ->
+         String.equal "Counter" force.name)
+     with
+     | Some force -> Ball.remove_force ball force
+     | None -> ());
     match
       List.find ball.forces ~f:(fun force -> Force.equal force new_force)
     with
@@ -115,7 +120,7 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
 let ball_cup_force_interaction (ball : Ball.t) (cup : Cup.t) =
   if ball_in_cup ball cup
   then (
-    print_string "ball in cup";
+    (* print_string "ball in cup"; *)
     ball.center
     <- { x = (cup.min.x +. cup.max.x) /. 2.0; y = cup.min.y +. ball.radius };
     ball.velocity <- { x = 0.0; y = 0.0 };

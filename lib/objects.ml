@@ -30,7 +30,13 @@ module Ball = struct
       ; y = Float.max new_position.y (0.0 +. t.radius)
       }
     in
-    print_s [%sexp (t.center : Vector.t)];
+    (* print_s [%sexp (t.center : Vector.t)]; *)
+    (* if Float.( = ) new_position2.y (0.0 +. t.radius)
+    then t.velocity <- { x = t.velocity.x; y = 0.0 };
+    if Float.( = ) new_position2.x (0.0 +. t.radius)
+    then t.velocity <- { y = t.velocity.y; x = 0.0 };
+    if Float.( = ) new_position2.y (500.0 -. t.radius)
+    then t.velocity <- { y = t.velocity.y; x = 0.0 }; *)
     t.center <- new_position2
   ;;
 

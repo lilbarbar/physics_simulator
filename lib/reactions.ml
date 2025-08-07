@@ -17,7 +17,7 @@ let generate_normal_force_helper (ball : Ball.t) (line : Line.t) =
   let new_force_vector =
     Vector.( * )
       (Vector.normalize line_vector)
-      (Float.abs (gravity_acceleration () *. ball.mass *. sin_theta))
+      (Float.abs (gravity_acceleration *. ball.mass *. sin_theta))
   in
   let new_force : Force.t =
     { vector = new_force_vector; name = "Normal Force" }
@@ -32,13 +32,47 @@ let generate_initial_line_velocity (ball : Ball.t) (line : Line.t) =
     | true -> Vector.( - ) line.first_endp line.second_endp
   in
   let unit_line_vector = Vector.normalize line_vector in
-  let sin_theta = unit_line_vector.x in
+  let sin_theta = unit_line_vector.y in
+  (* double check if x or y *)
   let magnitude_of_horiz_comp =
     Vector.mag ball.velocity *. Float.abs sin_theta
   in
   (* print_s
      [%sexp (Vector.( * ) unit_line_vector magnitude_of_horiz_comp : Vector.t)]; *)
   Vector.( * ) unit_line_vector magnitude_of_horiz_comp
+;;
+
+let ball_line_force_interaction_2 (ball : Ball.t) (line : Line.t) =
+  if ball_and_line ball line
+  then (
+    print_string "touching line";
+    let line_vector =
+      match Float.( >= ) line.second_endp.x line.first_endp.x with
+      | true -> Vector.( - ) line.second_endp line.first_endp
+      | false -> Vector.( - ) line.first_endp line.second_endp
+    in
+    (* let line_vector = Vector.( - ) line.second_endp line.first_endp in *)
+    let sin_theta = line_vector.y /. Vector.mag line_vector in
+    let cos_theta = line_vector.x /. Vector.mag line_vector in
+    let original_ball_velocity = ball.velocity in
+    print_s [%sexp (original_ball_velocity : Vector.t)];
+    let v_parallel =
+      (original_ball_velocity.x *. cos_theta)
+      +. (original_ball_velocity.y *. sin_theta)
+    in
+    let v_perp =
+      -1.0
+      *. ((original_ball_velocity.x *. -1.0 *. sin_theta)
+          +. (original_ball_velocity.y *. cos_theta))
+    in
+    let new_v_x =
+      (v_parallel *. cos_theta) +. (-1.0 *. sin_theta *. v_perp)
+    in
+    let new_v_y = (v_parallel *. sin_theta) +. (cos_theta *. v_perp) in
+    let new_velocity = { x = new_v_x; y = new_v_y } in
+    print_s [%sexp (new_velocity : Vector.t)];
+    ball.velocity <- new_velocity)
+  else ()
 ;;
 
 let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
@@ -54,9 +88,7 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
       Ball.remove_force
         ball
         { vector =
-            Vector.scale
-              { x = 0.0; y = gravity_acceleration () }
-              ~k:ball.mass
+            Vector.scale { x = 0.0; y = gravity_acceleration } ~k:ball.mass
         ; name = "Gravity"
         };
       (match
@@ -110,7 +142,7 @@ let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
     | Some force ->
       Ball.remove_force ball force;
       let gravity_vector =
-        Vector.scale { x = 0.0; y = gravity_acceleration () } ~k:ball.mass
+        Vector.scale { x = 0.0; y = gravity_acceleration } ~k:ball.mass
       in
       if List.is_empty ball.forces
       then Ball.add_force ball { vector = gravity_vector; name = "Gravity" }
@@ -128,7 +160,7 @@ let ball_cup_force_interaction (ball : Ball.t) (cup : Cup.t) =
   else if List.is_empty ball.forces
   then (
     let gravity_vector =
-      { x = 0.0; y = gravity_acceleration () *. ball.mass }
+      { x = 0.0; y = gravity_acceleration *. ball.mass }
     in
     Ball.add_force ball { vector = gravity_vector; name = "Gravity" })
   else ()
@@ -139,7 +171,7 @@ let all_ball_and_line_forces (canvas : Canvas.t) =
   let all_lines = canvas.lines in
   List.iter all_balls ~f:(fun ball ->
     List.iter all_lines ~f:(fun line ->
-      ball_line_force_interaction ball line))
+      ball_line_force_interaction_2 ball line))
 ;;
 
 let all_ball_and_cup_forces (canvas : Canvas.t) =

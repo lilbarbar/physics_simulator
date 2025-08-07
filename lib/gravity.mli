@@ -1,3 +1,3 @@
 open! Core
 
-val gravity_acceleration : unit -> float
+val gravity_acceleration : float

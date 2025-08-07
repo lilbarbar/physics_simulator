@@ -61,7 +61,7 @@ module Ball = struct
 
   let create ~center ~mass ~radius =
     let gravity_vector =
-      Vector.scale { x = 0.0; y = gravity_acceleration () } ~k:mass
+      Vector.scale { x = 0.0; y = Gravity.gravity_acceleration } ~k:mass
     in
     { center
     ; mass

@@ -17,9 +17,11 @@ let every seconds ~f ~stop =
 ;;
 
 let handle_steps (world : World.t) ~world_over =
-  let dt = 0.001 in
+  let dt = Constants.time_step in
+  let steps = ref 0 in
   every ~stop:world_over dt ~f:(fun () ->
-    Step.step world dt;
+    Step.step world dt !steps;
+    incr steps;
     World_graphics.render world.ui)
 ;;
 

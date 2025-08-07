@@ -4,7 +4,6 @@ open! Objects
 open! Vector
 
 let ball_point_collide (ball : Ball.t) (point : Vector.t) =
-  print_endline "ball_point_collide";
   let ball_point_dist_squared = Vector.dist_squared ball.center point in
   let radius_squared = ball.radius *. ball.radius in
   Float.( <= ) ball_point_dist_squared radius_squared

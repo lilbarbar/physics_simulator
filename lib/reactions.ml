@@ -24,7 +24,6 @@ let generate_normal_force_helper (ball : Ball.t) (line : Line.t) =
 ;;
 
 let resolve_ball_ball_collision (ball1 : Ball.t) (ball2 : Ball.t) =
-  print_endline "resolve_ball_ball_collision";
   let coeff_of_restitution = 1.0 in
   let ball1_center = ball1.center in
   let ball2_center = ball2.center in
@@ -32,6 +31,8 @@ let resolve_ball_ball_collision (ball1 : Ball.t) (ball2 : Ball.t) =
   let ball2_vel = ball2.velocity in
   let ball1_mass = ball1.mass in
   let ball2_mass = ball2.mass in
+  let ball1_radius = ball1.radius in
+  let ball2_radius = ball2.radius in
   let vector_from_ball2_ball1 = Vector.( - ) ball1_center ball2_center in
   let vector_from_ball2_ball1_norm =
     Vector.normalize vector_from_ball2_ball1
@@ -76,7 +77,8 @@ let resolve_ball_ball_collision (ball1 : Ball.t) (ball2 : Ball.t) =
   in
   ball1.velocity <- new_ball1_vel;
   ball2.velocity <- new_ball2_vel;
-  let overlap_dist = Vector.mag vector_from_ball2_ball1 in
+  let center_dist = Vector.mag vector_from_ball2_ball1 in
+  let overlap_dist = ball1_radius +. ball2_radius -. center_dist in
   let total_mass = ball1_mass +. ball2_mass in
   let correction_vector =
     Vector.scale vector_from_ball2_ball1_norm ~k:(overlap_dist /. total_mass)

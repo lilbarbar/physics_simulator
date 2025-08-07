@@ -50,4 +50,6 @@ type t =
   ; text_boxes : TextBox.t list
   }
 
+val find_button : t -> string -> Button.t option
+val find_textbox : t -> string -> TextBox.t option
 val create : height:int -> width:int -> t

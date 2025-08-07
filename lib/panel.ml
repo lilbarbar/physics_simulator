@@ -48,6 +48,16 @@ type t =
   ; text_boxes : TextBox.t list
   }
 
+let find_button t (id : string) =
+  let buttons = t.buttons in
+  List.find buttons ~f:(fun button -> String.equal button.id id)
+;;
+
+let find_textbox t (id : string) =
+  let text_boxes = t.text_boxes in
+  List.find text_boxes ~f:(fun text_box -> String.equal text_box.id id)
+;;
+
 let create ~height:ui_height ~width =
   let create_btn_width = width * 3 / 15 in
   let create_btn_height = ui_height / 20 in
@@ -117,8 +127,92 @@ let create ~height:ui_height ~width =
       ~height:create_btn_height
       ~width:(8 * width / 10)
       ~position:{ x = 7 * width * 3 / 10; y = box_y - 150 }
-      ~id:"click_state_text"
+      ~id:"click-state-text"
       ~display_text:""
+  in
+  let object_stats_velocity =
+    TextBox.create
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:{ x = 7 * width * 3 / 10; y = box_y - 180 }
+      ~id:"object-stats-velocity-text"
+      ~display_text:"Velocity:"
+  in
+  let object_stats_center =
+    TextBox.create
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:
+        { x = 7 * width * 3 / 10
+        ; y = box_y - 180 - (create_btn_height + 5)
+        }
+      ~id:"object-stats-center-text"
+      ~display_text:"Center:"
+  in
+  let object_stats_mass =
+    TextBox.create
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:
+        { x = 7 * width * 3 / 10
+        ; y = box_y - 180 - (2 * (create_btn_height + 5))
+        }
+      ~id:"object-stats-mass-text"
+      ~display_text:"Mass:"
+  in
+  let object_stats_speed =
+    TextBox.create
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:
+        { x = 7 * width * 3 / 10
+        ; y = box_y - 180 - (3 * (create_btn_height + 5))
+        }
+      ~id:"object-stats-speed-text"
+      ~display_text:"Speed:"
+  in
+  let object_stats_momentum =
+    TextBox.create
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:
+        { x = 7 * width * 3 / 10
+        ; y = box_y - 180 - (4 * (create_btn_height + 5))
+        }
+      ~id:"object-stats-momentum-text"
+      ~display_text:"Momentum:"
+  in
+  let object_stats_ke =
+    TextBox.create
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:
+        { x = 7 * width * 3 / 10
+        ; y = box_y - 180 - (5 * (create_btn_height + 5))
+        }
+      ~id:"object-stats-ke-text"
+      ~display_text:"Kinetic Energy:"
+  in
+  let object_stats_pe =
+    TextBox.create
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:
+        { x = 7 * width * 3 / 10
+        ; y = box_y - 180 - (6 * (create_btn_height + 5))
+        }
+      ~id:"object-stats-pe-text"
+      ~display_text:"Potential Energy:"
+  in
+  let stats_texts =
+    [ object_stats_center
+    ; object_stats_ke
+    ; object_stats_mass
+    ; object_stats_momentum
+    ; object_stats_pe
+    ; object_stats_speed
+    ; object_stats_velocity
+    ]
   in
   { height = ui_height
   ; width
@@ -130,6 +224,6 @@ let create ~height:ui_height ~width =
       ; clear_btn
       ; play_pause_button
       ]
-  ; text_boxes = [ click_state_text ]
+  ; text_boxes = [ click_state_text ] @ stats_texts
   }
 ;;

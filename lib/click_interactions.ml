@@ -54,7 +54,7 @@ let handle_select_object_first (t : World.t) (obj : ObjectTypeSelector.t) x y
   if Canvas.in_bounds t.ui.canvas x y
   then (
     let first_selected_pos =
-      { Vector.x = Float.of_int x; y = Float.of_int y }
+      { Vector.x = Units.to_units_float x; y = Units.to_units_float y }
     in
     t.click_state
     <- Click_state.Create_object_select_final (obj, first_selected_pos))
@@ -64,15 +64,15 @@ let handle_select_object_first (t : World.t) (obj : ObjectTypeSelector.t) x y
 ;;
 
 let handle_select_object_final (t : World.t) obj first_selected_pos x y =
-  let second_selected_pos =
-    { Vector.x = Float.of_int x; y = Float.of_int y }
-  in
-  let dist = Vector.dist first_selected_pos second_selected_pos in
-  let min_pos, max_pos =
-    find_min_max first_selected_pos second_selected_pos
-  in
   if Canvas.in_bounds t.ui.canvas x y
   then (
+    let second_selected_pos =
+      { Vector.x = Units.to_units_float x; y = Units.to_units_float y }
+    in
+    let dist = Vector.dist first_selected_pos second_selected_pos in
+    let min_pos, max_pos =
+      find_min_max first_selected_pos second_selected_pos
+    in
     (match obj with
      | ObjectTypeSelector.Ball ->
        let new_ball = Ball.create ~center:first_selected_pos ~radius:dist in
@@ -94,6 +94,36 @@ let handle_select_object_final (t : World.t) obj first_selected_pos x y =
   else
     List.iter t.ui.panel.buttons ~f:(fun button ->
       if Panel.Button.in_bounds button x y then on_button_click t button.id)
+;;
+
+let handle_free_state (t : World.t) x y =
+  let buttons = t.ui.panel.buttons in
+  List.iter buttons ~f:(fun button ->
+    if Panel.Button.in_bounds button x y then on_button_click t button.id);
+  let point =
+    { Vector.x = Units.to_units_float x; y = Units.to_units_float y }
+  in
+  let iter_obj_select f wrap lst =
+    List.iter lst ~f:(fun obj ->
+      if f obj point
+      then t.click_state <- Click_state.Drag_current_object (wrap obj))
+  in
+  iter_obj_select
+    Collisions.ball_point_collide
+    ObjectSelector.(fun b -> Ball b)
+    t.ui.canvas.balls;
+  iter_obj_select
+    Collisions.box_point_collide
+    ObjectSelector.(fun b -> Box b)
+    t.ui.canvas.boxes;
+  iter_obj_select
+    Collisions.line_point_collide
+    ObjectSelector.(fun l -> Line l)
+    t.ui.canvas.lines;
+  iter_obj_select
+    Collisions.cup_point_collide
+    ObjectSelector.(fun c -> Cup c)
+    t.ui.canvas.cups
 ;;
 
 let handle_drag_object (t : World.t) obj x y =

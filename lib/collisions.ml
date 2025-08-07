@@ -24,14 +24,13 @@ let cup_point_collide (cup : Cup.t) (point : Vector.t) =
 ;;
 
 let line_point_collide (line : Line.t) (point : Vector.t) =
-  let tolerance = 1.25 in
   let dist_first_endp = Vector.dist line.first_endp point in
   let dist_second_endp = Vector.dist line.second_endp point in
   let line_length = Line.length line in
   let dist_diff =
     Float.abs (dist_first_endp +. dist_second_endp -. line_length)
   in
-  Float.( <= ) dist_diff (tolerance *. tolerance *. 2.0)
+  Float.( <= ) dist_diff Constants.line_select_tolerance
 ;;
 
 let ball_and_ball (ball1 : Ball.t) (ball2 : Ball.t) : bool =

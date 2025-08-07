@@ -46,14 +46,12 @@ let step_show_object_stats (t : World.t) dt =
     ; "object-stats-momentum-text", "Momentum:"
     ; "object-stats-ke-text", "Kinetic E:"
     ; "object-stats-pe-text", "Potential E:"
+    ; "object-stats-me-text", "Mechanical E:"
     ]
     ~f:(fun (id, text) -> update_stats_textbox t id text);
-  (* Convert mouse pixels to units *)
   let mouse_x, mouse_y = mouse_pos () in
   let current_mouse_pos =
-    { Vector.x = Units.to_units_float mouse_x
-    ; y = Units.to_units_float mouse_y
-    }
+    { Vector.x = Units.to_units mouse_x; y = Units.to_units mouse_y }
   in
   List.iter t.ui.canvas.balls ~f:(fun ball ->
     if Collisions.ball_point_collide ball current_mouse_pos
@@ -62,9 +60,12 @@ let step_show_object_stats (t : World.t) dt =
       let ball_center = ball.center in
       let ball_mass = ball.mass in
       let ball_vel_mag = Vector.mag ball_vel in
-      let ball_momentum_mag = ball_mass *. ball_vel_mag in
+      let ball_momentum = Vector.( * ) ball_vel ball_mass in
       let ball_ke = ball_mass *. ball_vel_mag *. ball_vel_mag /. 2.0 in
-      let ball_pe = ball_mass *. Constants.g *. ball_center.y in
+      let ball_pe =
+        -.ball_mass *. Constants.g *. (ball_center.y -. ball.radius)
+      in
+      let ball_me = ball_ke +. ball_pe in
       let ball_vel_text =
         Printf.sprintf "Velocity: (%.2f, %.2f)" ball_vel.x ball_vel.y
       in
@@ -74,10 +75,14 @@ let step_show_object_stats (t : World.t) dt =
       let ball_mass_text = Printf.sprintf "Mass: %.2f" ball_mass in
       let ball_speed_text = Printf.sprintf "Speed: %.2f" ball_vel_mag in
       let ball_momentum_text =
-        Printf.sprintf "Momentum: %.2f" ball_momentum_mag
+        Printf.sprintf
+          "Momentum: (%.2f, %.2f)"
+          ball_momentum.x
+          ball_momentum.y
       in
       let ball_ke_text = Printf.sprintf "Kinetic E: %.2f" ball_ke in
       let ball_pe_text = Printf.sprintf "Potential E: %.2f" ball_pe in
+      let ball_me_text = Printf.sprintf "Mechanical E: %.2f" ball_me in
       List.iter
         [ "object-stats-velocity-text", ball_vel_text
         ; "object-stats-center-text", ball_center_text
@@ -86,6 +91,7 @@ let step_show_object_stats (t : World.t) dt =
         ; "object-stats-momentum-text", ball_momentum_text
         ; "object-stats-ke-text", ball_ke_text
         ; "object-stats-pe-text", ball_pe_text
+        ; "object-stats-me-text", ball_me_text
         ]
         ~f:(fun (id, text) -> update_stats_textbox t id text)))
 ;;
@@ -94,9 +100,7 @@ let step_drag_object (t : World.t) dt =
   ignore dt;
   let mouse_x, mouse_y = mouse_pos () in
   let current_mouse_pos =
-    { Vector.x = Units.to_units_float mouse_x
-    ; y = Units.to_units_float mouse_y
-    }
+    { Vector.x = Units.to_units mouse_x; y = Units.to_units mouse_y }
   in
   match t.click_state with
   | Click_state.Drag_current_object obj ->
@@ -137,7 +141,7 @@ let step_velocities (t : World.t) dt =
 
 let step_reactions (t : World.t) dt =
   ignore dt;
-  Reactions.update_forces t.ui.canvas
+  Reactions.react t.ui.canvas
 ;;
 
 let step (t : World.t) dt steps =

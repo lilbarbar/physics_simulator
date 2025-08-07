@@ -3,18 +3,18 @@ open! Graphics
 open! Objects
 
 let draw_ball (ball : Ball.t) =
-  let x = Units.to_pixels_int ball.center.x in
-  let y = Units.to_pixels_int ball.center.y in
-  let radius = Units.to_pixels_int ball.radius in
+  let x = Units.to_pixels ball.center.x in
+  let y = Units.to_pixels ball.center.y in
+  let radius = Units.to_pixels ball.radius in
   Graphics.set_color Graphics.blue;
   Graphics.fill_circle x y radius
 ;;
 
 let draw_line (line : Line.t) : unit =
-  let x1 = Units.to_pixels_int line.first_endp.x in
-  let y1 = Units.to_pixels_int line.first_endp.y in
-  let x2 = Units.to_pixels_int line.second_endp.x in
-  let y2 = Units.to_pixels_int line.second_endp.y in
+  let x1 = Units.to_pixels line.first_endp.x in
+  let y1 = Units.to_pixels line.first_endp.y in
+  let x2 = Units.to_pixels line.second_endp.x in
+  let y2 = Units.to_pixels line.second_endp.y in
   Graphics.set_line_width 2;
   Graphics.set_color Graphics.green;
   Graphics.moveto x1 y1;
@@ -22,10 +22,10 @@ let draw_line (line : Line.t) : unit =
 ;;
 
 let draw_cup (cup : Cup.t) : unit =
-  let x1 = Units.to_pixels_int cup.min.x in
-  let y1 = Units.to_pixels_int cup.min.y in
-  let x2 = Units.to_pixels_int cup.max.x in
-  let y2 = Units.to_pixels_int cup.max.y in
+  let x1 = Units.to_pixels cup.min.x in
+  let y1 = Units.to_pixels cup.min.y in
+  let x2 = Units.to_pixels cup.max.x in
+  let y2 = Units.to_pixels cup.max.y in
   Graphics.set_line_width 2;
   Graphics.set_color Graphics.red;
   Graphics.moveto x1 y2;
@@ -35,10 +35,10 @@ let draw_cup (cup : Cup.t) : unit =
 ;;
 
 let draw_box (box : Box.t) : unit =
-  let x1 = Units.to_pixels_int box.min.x in
-  let y1 = Units.to_pixels_int box.min.y in
-  let x2 = Units.to_pixels_int box.max.x in
-  let y2 = Units.to_pixels_int box.max.y in
+  let x1 = Units.to_pixels box.min.x in
+  let y1 = Units.to_pixels box.min.y in
+  let x2 = Units.to_pixels box.max.x in
+  let y2 = Units.to_pixels box.max.y in
   Graphics.set_color Graphics.yellow;
   Graphics.fill_rect x1 y1 (x2 - x1) (y2 - y1)
 ;;

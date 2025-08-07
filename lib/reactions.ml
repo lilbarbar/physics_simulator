@@ -3,28 +3,7 @@ open! Collisions
 open! Objects
 open! Vector
 
-(* let vector_components (vector : Vector.t) (sin_theta : Float.t) : (Vector.t * Vector.t )= *)
-
-let generate_normal_force_helper (ball : Ball.t) (line : Line.t) =
-  let line_vector =
-    match Float.( >= ) line.second_endp.y line.first_endp.y with
-    | false -> Vector.( - ) line.second_endp line.first_endp
-    | true -> Vector.( - ) line.first_endp line.second_endp
-  in
-  let sin_theta = line_vector.y /. Vector.mag line_vector in
-  let new_force_vector =
-    Vector.( * )
-      (Vector.normalize line_vector)
-      (Float.abs (980.0 *. ball.mass *. sin_theta))
-  in
-  let new_force : Force.t =
-    { vector = new_force_vector; name = "Normal Force" }
-  in
-  new_force
-;;
-
 let resolve_ball_ball_collision (ball1 : Ball.t) (ball2 : Ball.t) =
-  let coeff_of_restitution = 1.0 in
   let ball1_center = ball1.center in
   let ball2_center = ball2.center in
   let ball1_vel = ball1.velocity in
@@ -53,8 +32,10 @@ let resolve_ball_ball_collision (ball1 : Ball.t) (ball2 : Ball.t) =
   let ball2_vel_tang_comp = Vector.( - ) ball2_vel ball2_vel_norm_comp in
   let new_ball1_vel_norm =
     ((ball1_vel_dot_prod
-      *. (ball1_mass -. (coeff_of_restitution *. ball2_mass)))
-     +. ((1.0 +. coeff_of_restitution) *. ball2_mass *. ball2_vel_dot_prod))
+      *. (ball1_mass -. (Constants.coeff_of_restitution *. ball2_mass)))
+     +. ((1.0 +. Constants.coeff_of_restitution)
+         *. ball2_mass
+         *. ball2_vel_dot_prod))
     /. (ball1_mass +. ball2_mass)
   in
   let new_ball1_vel_norm_vector =
@@ -62,8 +43,10 @@ let resolve_ball_ball_collision (ball1 : Ball.t) (ball2 : Ball.t) =
   in
   let new_ball2_vel_norm =
     ((ball2_vel_dot_prod
-      *. (ball2_mass -. (coeff_of_restitution *. ball1_mass)))
-     +. ((1.0 +. coeff_of_restitution) *. ball1_mass *. ball1_vel_dot_prod))
+      *. (ball2_mass -. (Constants.coeff_of_restitution *. ball1_mass)))
+     +. ((1.0 +. Constants.coeff_of_restitution)
+         *. ball1_mass
+         *. ball1_vel_dot_prod))
     /. (ball1_mass +. ball2_mass)
   in
   let new_ball2_vel_norm_vector =
@@ -74,6 +57,16 @@ let resolve_ball_ball_collision (ball1 : Ball.t) (ball2 : Ball.t) =
   in
   let new_ball2_vel =
     Vector.( + ) new_ball2_vel_norm_vector ball2_vel_tang_comp
+  in
+  let new_ball1_vel =
+    if Float.( < ) (Vector.mag new_ball1_vel) Constants.velocity_threshold
+    then Vector.zero ()
+    else new_ball1_vel
+  in
+  let new_ball2_vel =
+    if Float.( < ) (Vector.mag new_ball2_vel) Constants.velocity_threshold
+    then Vector.zero ()
+    else new_ball2_vel
   in
   ball1.velocity <- new_ball1_vel;
   ball2.velocity <- new_ball2_vel;
@@ -87,6 +80,24 @@ let resolve_ball_ball_collision (ball1 : Ball.t) (ball2 : Ball.t) =
   <- Vector.( + ) ball1.center (Vector.( * ) correction_vector ball2_mass);
   ball2.center
   <- Vector.( - ) ball2.center (Vector.( * ) correction_vector ball1_mass)
+;;
+
+let generate_normal_force_helper (ball : Ball.t) (line : Line.t) =
+  let line_vector =
+    match Float.( >= ) line.second_endp.y line.first_endp.y with
+    | false -> Vector.( - ) line.second_endp line.first_endp
+    | true -> Vector.( - ) line.first_endp line.second_endp
+  in
+  let sin_theta = line_vector.y /. Vector.mag line_vector in
+  let new_force_vector =
+    Vector.( * )
+      (Vector.normalize line_vector)
+      (Float.abs (980.0 *. ball.mass *. sin_theta))
+  in
+  let new_force : Force.t =
+    { vector = new_force_vector; name = "Normal Force" }
+  in
+  new_force
 ;;
 
 let ball_line_force_interaction (ball : Ball.t) (line : Line.t) =
@@ -167,7 +178,7 @@ let all_ball_and_cup_forces (canvas : Canvas.t) =
     List.iter all_cups ~f:(fun cup -> ball_cup_force_interaction ball cup))
 ;;
 
-let handle_ball_ball_interactions (canvas : Canvas.t) =
+let handle_ball_ball_reactions (canvas : Canvas.t) =
   List.iteri canvas.balls ~f:(fun i ball1 ->
     let rest = List.drop canvas.balls Int.(i + 1) in
     List.iter rest ~f:(fun ball2 ->
@@ -175,8 +186,4 @@ let handle_ball_ball_interactions (canvas : Canvas.t) =
       then resolve_ball_ball_collision ball1 ball2))
 ;;
 
-let update_forces (canvas : Canvas.t) =
-  (* all_ball_and_line_forces canvas; *)
-  (* all_ball_and_cup_forces canvas *)
-  handle_ball_ball_interactions canvas
-;;
+let react (canvas : Canvas.t) = handle_ball_ball_reactions canvas

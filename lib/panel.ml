@@ -143,9 +143,7 @@ let create ~height:ui_height ~width =
       ~height:create_btn_height
       ~width:(8 * width / 10)
       ~position:
-        { x = 7 * width * 3 / 10
-        ; y = box_y - 180 - (create_btn_height + 5)
-        }
+        { x = 7 * width * 3 / 10; y = box_y - 180 - (create_btn_height + 5) }
       ~id:"object-stats-center-text"
       ~display_text:"Center:"
   in
@@ -204,6 +202,17 @@ let create ~height:ui_height ~width =
       ~id:"object-stats-pe-text"
       ~display_text:"Potential Energy:"
   in
+  let object_stats_me =
+    TextBox.create
+      ~height:create_btn_height
+      ~width:(8 * width / 10)
+      ~position:
+        { x = 7 * width * 3 / 10
+        ; y = box_y - 180 - (7 * (create_btn_height + 5))
+        }
+      ~id:"object-stats-me-text"
+      ~display_text:"Mechanical Energy:"
+  in
   let stats_texts =
     [ object_stats_center
     ; object_stats_ke
@@ -212,6 +221,7 @@ let create ~height:ui_height ~width =
     ; object_stats_pe
     ; object_stats_speed
     ; object_stats_velocity
+    ; object_stats_me
     ]
   in
   { height = ui_height

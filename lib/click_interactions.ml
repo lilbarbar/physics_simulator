@@ -54,7 +54,7 @@ let handle_select_object_first (t : World.t) (obj : ObjectTypeSelector.t) x y
   if Canvas.in_bounds t.ui.canvas x y
   then (
     let first_selected_pos =
-      { Vector.x = Units.to_units_float x; y = Units.to_units_float y }
+      { Vector.x = Units.to_units x; y = Units.to_units y }
     in
     t.click_state
     <- Click_state.Create_object_select_final (obj, first_selected_pos))
@@ -67,7 +67,7 @@ let handle_select_object_final (t : World.t) obj first_selected_pos x y =
   if Canvas.in_bounds t.ui.canvas x y
   then (
     let second_selected_pos =
-      { Vector.x = Units.to_units_float x; y = Units.to_units_float y }
+      { Vector.x = Units.to_units x; y = Units.to_units y }
     in
     let dist = Vector.dist first_selected_pos second_selected_pos in
     let min_pos, max_pos =
@@ -100,9 +100,7 @@ let handle_free_state (t : World.t) x y =
   let buttons = t.ui.panel.buttons in
   List.iter buttons ~f:(fun button ->
     if Panel.Button.in_bounds button x y then on_button_click t button.id);
-  let point =
-    { Vector.x = Units.to_units_float x; y = Units.to_units_float y }
-  in
+  let point = { Vector.x = Units.to_units x; y = Units.to_units y } in
   let iter_obj_select f wrap lst =
     List.iter lst ~f:(fun obj ->
       if f obj point
@@ -127,6 +125,9 @@ let handle_free_state (t : World.t) x y =
 ;;
 
 let handle_drag_object (t : World.t) obj x y =
+  (match obj with
+   | ObjectSelector.Ball ball -> ball.velocity <- Vector.zero ()
+   | _ -> ());
   t.click_state <- Click_state.Free_state
 ;;
 
@@ -139,7 +140,7 @@ let handle_free_state (t : World.t) x y =
   let buttons = t.ui.panel.buttons in
   List.iter buttons ~f:(fun button ->
     if Panel.Button.in_bounds button x y then on_button_click t button.id);
-  let point = { Vector.x = Float.of_int x; y = Float.of_int y } in
+  let point = { Vector.x = Units.to_units x; y = Units.to_units y } in
   let iter_obj_select f wrap lst =
     List.iter lst ~f:(fun obj ->
       if f obj point

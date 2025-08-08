@@ -48,28 +48,24 @@ let ball_and_ball_collision_point (ball1 : Ball.t) (ball2 : Ball.t)
 let ball_and_line (ball : Ball.t) (line : Line.t) : bool =
   let vector_A = Vector.( - ) ball.center line.first_endp in
   let vector_B = Vector.( - ) line.second_endp line.first_endp in
-  let projection =
-    Vector.( * )
-      vector_B
-      (Vector.dot_product vector_A vector_B
-       /. Vector.dot_product vector_B vector_B)
+  let dot = Vector.dot_product vector_A vector_B in
+  let len_sq = Vector.dot_product vector_B vector_B in
+  let t =
+    if Float.equal len_sq 0.0
+    then 0.0
+    else (
+      let proj = dot /. len_sq in
+      if Float.( < ) proj 0.0
+      then 0.0
+      else if Float.( > ) proj 1.0
+      then 1.0
+      else proj)
   in
-  let ortho_to_projection = Vector.( - ) vector_A projection in
-  let min_x, max_x =
-    match Float.( <= ) line.second_endp.x line.first_endp.x with
-    | true -> line.second_endp.x, line.first_endp.x
-    | false -> line.first_endp.x, line.second_endp.x
+  let closest_point =
+    Vector.( + ) line.first_endp (Vector.scale vector_B ~k:t)
   in
-  let min_y, max_y =
-    match Float.( <= ) line.second_endp.y line.first_endp.y with
-    | true -> line.second_endp.y, line.first_endp.y
-    | false -> line.first_endp.y, line.second_endp.y
-  in
-  Float.( <= ) (Vector.mag ortho_to_projection) ball.radius
-  && Float.( >= ) ball.center.x min_x
-  && Float.( <= ) ball.center.x max_x
-  && Float.( >= ) ball.center.y min_y
-  && Float.( <= ) ball.center.y max_y
+  let dist = Vector.dist ball.center closest_point in
+  Float.( <= ) dist ball.radius
 ;;
 
 let ball_and_line_collision_point (ball : Ball.t) (line : Line.t) : Vector.t =
@@ -146,55 +142,16 @@ let ball_collides_with_cup_bottom_collision_point
   { x = ball.center.x; y = ball.center.y +. ball.radius }
 ;;
 
-let ball_collides_with_box (ball : Ball.t) (box : Box.t) : bool =
-  let left_side =
-    Float.compare (ball.center.x +. ball.radius) box.min.x = 0
-    && Float.compare ball.center.y box.min.y > 0
-    && Float.compare ball.center.y box.max.y < 0
-  in
-  let top_side =
-    Float.compare (ball.center.y -. ball.radius) box.max.y = 0
-    && Float.compare ball.center.x box.min.x > 0
-    && Float.compare ball.center.x box.max.x < 0
-  in
-  let right_side =
-    Float.compare (ball.center.x -. ball.radius) box.min.x = 0
-    && Float.compare ball.center.y box.min.y > 0
-    && Float.compare ball.center.y box.max.y < 0
-  in
-  let bottom_side =
-    Float.compare (ball.center.y +. ball.radius) box.min.y = 0
-    && Float.compare ball.center.x box.min.x > 0
-    && Float.compare ball.center.x box.max.x < 0
-  in
-  let top_left_corner =
-    let vec1 = ball.center in
-    let vec2 = { x = box.min.x; y = box.max.y } in
-    Float.compare (Vector.dist vec1 vec2) ball.radius = 0
-  in
-  let top_right_corner =
-    let vec1 = ball.center in
-    let vec2 = { x = box.max.x; y = box.max.y } in
-    Float.compare (Vector.dist vec1 vec2) ball.radius = 0
-  in
-  let bottom_right_corner =
-    let vec1 = ball.center in
-    let vec2 = { x = box.max.x; y = box.min.y } in
-    Float.compare (Vector.dist vec1 vec2) ball.radius = 0
-  in
-  let bottom_left_corner =
-    let vec1 = ball.center in
-    let vec2 = { x = box.min.x; y = box.min.y } in
-    Float.compare (Vector.dist vec1 vec2) ball.radius = 0
-  in
-  left_side
-  || top_side
-  || right_side
-  || bottom_side
-  || top_left_corner
-  || top_right_corner
-  || bottom_right_corner
-  || bottom_left_corner
+let ball_collides_with_box (ball : Ball.t) (box : Box.t) =
+  let ball_x = ball.center.x in
+  let ball_y = ball.center.y in
+  let radius = ball.radius in
+  let closest_x = Float.min (Float.max ball_x box.min.x) box.max.x in
+  let closest_y = Float.min (Float.max ball_y box.min.y) box.max.y in
+  let dx = ball_x -. closest_x in
+  let dy = ball_y -. closest_y in
+  let distance_squared = (dx *. dx) +. (dy *. dy) in
+  Float.( <= ) distance_squared (radius *. radius)
 ;;
 
 let ball_collides_with_box_collision_point (ball : Ball.t) (box : Box.t)

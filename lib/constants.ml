@@ -8,5 +8,5 @@ let ui_width = 750
 let surface_density = 10.0
 let pixels_per_unit = 200.0
 let line_select_tolerance = 0.01
-let coeff_of_restitution = 0.9
-let velocity_threshold = 1.0
+let coeff_of_restitution = 0.99
+let velocity_threshold = 3.0
